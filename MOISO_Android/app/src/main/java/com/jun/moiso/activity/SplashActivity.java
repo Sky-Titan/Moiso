@@ -22,7 +22,7 @@ public class SplashActivity extends AppCompatActivity implements Animator {
         removeActionBar();
 
         TextView mosio_textview = (TextView) findViewById(R.id.moiso_text_splash);
-        doAnimation(mosio_textview,R.anim.alpha);
+        doAnimation(mosio_textview,R.anim.alpha_create);
     }
 
     //상,하단 바 제거

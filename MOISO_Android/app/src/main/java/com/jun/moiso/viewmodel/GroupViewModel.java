@@ -18,6 +18,11 @@ public class GroupViewModel {
     {
         item_list.add(groupListItem);
     }
+
+    public void removeItem(int position)
+    {
+        item_list.remove(position);
+    }
     public ObservableArrayList<GroupListItem> getItem_list() {
         return item_list;
     }

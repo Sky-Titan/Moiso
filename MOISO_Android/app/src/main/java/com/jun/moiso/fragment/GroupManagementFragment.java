@@ -2,6 +2,8 @@ package com.jun.moiso.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
@@ -21,8 +23,8 @@ import com.jun.moiso.viewmodel.GroupViewModel;
 
 public class GroupManagementFragment extends Fragment {
 
-    private View v;
-    private GroupViewModel groupViewModel;
+    private static View v;
+    private static GroupViewModel groupViewModel;
     private FragmentGroupManagementBinding binding;
     private ImageButton groupadd_btn;
 
@@ -40,6 +42,7 @@ public class GroupManagementFragment extends Fragment {
 
         v = binding.getRoot();
 
+        //TODO : 추가 테스트 후에 삭제
         plusOnclick();
 
         return v;
@@ -51,19 +54,19 @@ public class GroupManagementFragment extends Fragment {
         GroupAdapter groupAdapter;
         if(recyclerView.getAdapter() == null)
         {
-            groupAdapter = new GroupAdapter();
+            groupAdapter = new GroupAdapter(v.getContext(), groupViewModel);
             recyclerView.setAdapter(groupAdapter);
         }
         else
             groupAdapter = (GroupAdapter)recyclerView.getAdapter();
 
         groupAdapter.setGroupListItems(groupListItems);
-        groupAdapter.notifyDataSetChanged();
+        groupAdapter.notifyDataSetChanged();//데이터 변경알림
     }
 
+    //TODO : 추가 테스트 후에 삭제
     public void plusOnclick()
     {
-        //TODO : 추가 테스트 후에 삭제
         groupViewModel = new GroupViewModel();
         groupViewModel.addItem(new GroupListItem("전세환"));
         groupViewModel.addItem(new GroupListItem("박준현"));
