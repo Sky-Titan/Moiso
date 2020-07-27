@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="dark_theme_color">#343434</color>
+    <color name="white_theme_color">#F7F7F6</color>
+    <color name="admin_background_white">#F8F8F8</color>
+    <color name="admin_background_black">#323232</color>
+    <color name="snow">#FFFFFAFA</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="limegreen">#FF32CD32</color>
+    <color name="dark_green">#599A83</color>
+    <color name="light_gray">#9A9797</color>
+    <color name="blue_green">#4BC69B</color>
+    <color name="gray">#FF808080</color>
+    <color name="dark_gray">#323232</color>
+    <color name="orange">#FFFFA500</color>
+    <color name="red">#FFFF0000</color>
+    <color name="yellow">#FFFFFF00</color>
+    <color name="skyblue">#4374D9</color>
+    <color name="gray_2">#434343</color>
+    <color name="transparent">#00FF0000</color>
+    <color name="blue_for_splash">#D51B62FF</color>
+    <color name="light_gray_2">#F1F1F1</color>
+    <color name="light_gray_3">#867A7A</color>
+    <color name="light_gray_4">#C1C1C1</color>
+    <color name="rounded_red">#EB5061</color>
+    <color name="ment_color">#613E40</color>
+
+    <color name="Zero_pay">#002888</color>
+    <color name="Samsung_pay">#0063FF</color>
+    <color name="Kakao">#FCDD01</color>
+    <color name="Card">#EB5061</color>
+
+
+    <color name="Main_confirm">#3978C1</color>
+    <color name="admin_confirm">#3978C1</color>
+
+    <color name="admin_cancel">#323132</color>
+
+    <color name="announce_mint">#52C59E</color>
+
+
 </resources>
