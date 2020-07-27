@@ -30,17 +30,28 @@
 ## 2. 개발 환경
 --------------------
 - OS
-  - Android, Window, Linux
+  - Android
+  - Window
+  - Linux
 - Language
   - Java
+  - SQL
 - Library
   - Robot
+- Tools
+  - AndroidStudio
+  - MySQL
+  - AWS
+  - IntelliJ
   
-## 3. UI 프로토타입
+## 3. 참조 이미지
 --------------------
-- Android
+- UI 프로토타입 : 안드로이드
   - <img src=./img/android_1.png width="250"> <img src=./img/android_2.png width="250"> <img src=./img/android_3.png width="250"> <img src=./img/android_4.png width="250">
+- 시퀀스 다이어그램
+  - <img src=./img/sequence.png width="500">
+- ER 다이어그램
+  - <img src=./img/ER_MOISO.png width="500">
+- Relational 다이어그램
+  - <img src=./img/Relational_MOISO.png width="500">
 
-## 4. 시퀀스 다이어그램
---------------------
-<img src=./img/sequence.png width="500">
