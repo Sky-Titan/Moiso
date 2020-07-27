@@ -31,22 +31,42 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GroupManagementFragment groupManagementFragment = new GroupManagementFragment();
-        ProfileFragment profileFragment = new ProfileFragment();
-        SettingFragment settingFragment = new SettingFragment();
+        setFragments();
+        setViewPager();
+        setViewPagerAdapter();
+        setBottomNavigationView();
 
+    }
 
+    //프래그먼트 생성
+    public void setFragments()
+    {
+        groupManagementFragment = new GroupManagementFragment();
+        profileFragment = new ProfileFragment();
+        settingFragment = new SettingFragment();
+    }
+
+    //viewpager 생성
+    public void setViewPager()
+    {
         viewPager = (ViewPager2) findViewById(R.id.fragment_container_viewpager);
         viewPager.setUserInputEnabled(false);//user 스크롤 막음
+    }
 
+    //viewpager adapter 생성
+    public void setViewPagerAdapter()
+    {
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),getLifecycle());
         viewPagerAdapter.addFragment(groupManagementFragment);
         viewPagerAdapter.addFragment(profileFragment);
         viewPagerAdapter.addFragment(settingFragment);
 
         viewPager.setAdapter(viewPagerAdapter);
+    }
 
-
+    //bottomnavigation view 생성 및 세팅
+    public void setBottomNavigationView()
+    {
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomnavigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -67,7 +87,5 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
     }
 }
