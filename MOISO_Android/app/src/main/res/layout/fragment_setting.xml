@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingHorizontal="10dp"
-    tools:context=".fragment.GroupManagementFragment">
+    tools:context=".fragment.SettingFragment">
 
     <TextView
         android:id="@+id/setting_text"

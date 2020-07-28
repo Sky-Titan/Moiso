@@ -4,10 +4,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -42,32 +44,40 @@ public class GroupManagementFragment extends Fragment {
 
         v = binding.getRoot();
 
+        groupViewModel = new GroupViewModel();
         //TODO : 추가 테스트 후에 삭제
         plusOnclick();
 
         return v;
     }
 
+    //viewmodel의 item list에 변경 생길 때마다 호출
     @BindingAdapter("items")
     public static void setItems(RecyclerView recyclerView,  ObservableArrayList<GroupListItem> groupListItems)
     {
         GroupAdapter groupAdapter;
+
+        //Recyclerview 초기화
         if(recyclerView.getAdapter() == null)
         {
+            //구분선 적용
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
+            recyclerView.addItemDecoration(dividerItemDecoration);
+
+            //adapter 적용
             groupAdapter = new GroupAdapter(v.getContext(), groupViewModel);
             recyclerView.setAdapter(groupAdapter);
         }
         else
             groupAdapter = (GroupAdapter)recyclerView.getAdapter();
 
-        groupAdapter.setGroupListItems(groupListItems);
-        groupAdapter.notifyDataSetChanged();//데이터 변경알림
+        groupAdapter.setGroupListItems(groupListItems);//item list 적용
+        groupAdapter.notifyDataSetChanged();//데이터 변경알림!
     }
 
     //TODO : 추가 테스트 후에 삭제
     public void plusOnclick()
     {
-        groupViewModel = new GroupViewModel();
         groupViewModel.addItem(new GroupListItem("전세환"));
         groupViewModel.addItem(new GroupListItem("박준현"));
         groupViewModel.addItem(new GroupListItem("이준영"));
