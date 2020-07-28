@@ -52,11 +52,13 @@
             <Button
                 android:id="@+id/connect_btn_group"
                 android:text="연결"
+                android:textColor="@color/white"
+                android:onClick="connectClick"
                 android:paddingRight="10dp"
+                android:paddingLeft="20dp"
+                android:background="@drawable/ripple_blue"
                 android:drawableRight="@drawable/ic_twotone_touch_app_24"
                 android:layout_marginVertical="10dp"
-                android:textColor="@color/white"
-                android:background="@drawable/ripple_lime_green"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></Button>
         </LinearLayout>

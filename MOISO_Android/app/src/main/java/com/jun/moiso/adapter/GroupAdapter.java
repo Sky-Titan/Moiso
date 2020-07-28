@@ -25,7 +25,9 @@ import com.jun.moiso.viewmodel.GroupViewModel;
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHolder<GrouplistItemBinding>> {
 
     private GroupViewModel groupViewModel;
-    private int lastPosition = 0;
+
+    private int lastPosition = 0; //item list의 변경전 크기를 나타낸다.
+
     private ObservableArrayList<GroupListItem> groupListItems = new ObservableArrayList<>();
     private Context context;
 
@@ -50,6 +52,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //TODO : 서버에서 삭제 작업
                 delelteAnimation(holder.itemView,position);
 
             }
@@ -60,6 +64,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
     //아이템 추가 애니메이션
     private void createAnimation(View viewToAnimate, int position) {
+
+        //새로 생성된 item에 한해서만 animation 실행
         if (position > lastPosition)
         {
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha_create);

@@ -10,7 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme_notitle"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.GroupActivity"></activity>
+        <activity android:name=".activity.SignUpActivity"></activity>
+        <activity android:name=".activity.ControlActivity" />
+        <activity android:name=".activity.GroupActivity" />
         <activity android:name=".activity.SignInActivity" />
         <activity android:name=".activity.SplashActivity">
             <intent-filter>

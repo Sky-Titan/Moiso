@@ -42,7 +42,8 @@ public class SignInActivity extends AppCompatActivity {
 
     public void signUpClick(View v)
     {
-
+        Intent intent = new Intent(this, SignUpActivity.class);
+        startActivity(intent);
     }
 
     public void pwFindClick(View v)

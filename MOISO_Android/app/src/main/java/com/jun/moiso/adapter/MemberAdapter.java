@@ -7,11 +7,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ViewDataBinding;
+import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jun.moiso.R;
@@ -39,9 +41,19 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MemberViewHolder<MemberlistItemBinding> holder, int position) {
+    public void onBindViewHolder(@NonNull final MemberViewHolder<MemberlistItemBinding> holder,final int position) {
         holder.binding().setItem(memberListItems.get(position));
 
+        //삭제 버튼 리스너
+        ImageButton delete = (ImageButton) holder.itemView.findViewById(R.id.memberdelete_btn_item);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //TODO : 서버에서 삭제 작업
+                delelteAnimation(holder.itemView,position);
+            }
+        });
 
         createAnimation(holder.itemView,position);
     }
@@ -55,6 +67,34 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
         }
+    }
+
+    //아이템 삭제 애니메이션
+    private void delelteAnimation(View viewToAnimate, final int position) {
+
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha_remove);
+        animation.setInterpolator(new DecelerateInterpolator());
+        viewToAnimate.startAnimation(animation);
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //item list에서 제거
+                memberViewModel.removeItem(position);
+                lastPosition--;
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
     }
 
     public ObservableArrayList<MemberListItem> getMemberListItems() {
@@ -77,13 +117,6 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         public MemberViewHolder(final View v){
             super(v);
             this.binding = (T) DataBindingUtil.bind(v);
-            binding.getRoot().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO : item 포지션에 따른 내용 삽입 수정
-
-                }
-            });
 
         }
 

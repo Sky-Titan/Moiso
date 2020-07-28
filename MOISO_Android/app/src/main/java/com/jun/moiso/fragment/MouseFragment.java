@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 
 import com.jun.moiso.R;
 
+public class MouseFragment extends Fragment {
 
-public class ProfileFragment extends Fragment {
+
 
     private View v;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,8 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v = inflater.inflate(R.layout.fragment_profile, container, false);
+        v = inflater.inflate(R.layout.fragment_mouse, container, false);
+
         return v;
     }
 }

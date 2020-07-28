@@ -10,11 +10,9 @@ import android.view.ViewGroup;
 
 import com.jun.moiso.R;
 
-
-public class ProfileFragment extends Fragment {
+public class KeyboardFragment extends Fragment {
 
     private View v;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,7 +24,8 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v = inflater.inflate(R.layout.fragment_profile, container, false);
+        v = inflater.inflate(R.layout.fragment_keyboard, container, false);
+
         return v;
     }
 }
