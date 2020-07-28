@@ -2,18 +2,33 @@ package com.jun.moiso.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableArrayList;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.jun.moiso.R;
+import com.jun.moiso.adapter.GroupAdapter;
+import com.jun.moiso.databinding.FragmentGroupManagementBinding;
+import com.jun.moiso.item.GroupListItem;
+import com.jun.moiso.viewmodel.GroupViewModel;
 
 public class GroupManagementFragment extends Fragment {
 
-    private View v;
-
+    private static View v;
+    private static GroupViewModel groupViewModel;
+    private FragmentGroupManagementBinding binding;
+    private ImageButton groupadd_btn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,7 +40,58 @@ public class GroupManagementFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        v = inflater.inflate(R.layout.fragment_group_management, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_group_management, container, false);
+
+        v = binding.getRoot();
+
+        groupViewModel = new GroupViewModel();
+        //TODO : 추가 테스트 후에 삭제
+        plusOnclick();
+
         return v;
+    }
+
+    //viewmodel의 item list에 변경 생길 때마다 호출
+    @BindingAdapter("items")
+    public static void setItems(RecyclerView recyclerView,  ObservableArrayList<GroupListItem> groupListItems)
+    {
+        GroupAdapter groupAdapter;
+
+        //Recyclerview 초기화
+        if(recyclerView.getAdapter() == null)
+        {
+            //구분선 적용
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
+            recyclerView.addItemDecoration(dividerItemDecoration);
+
+            //adapter 적용
+            groupAdapter = new GroupAdapter(v.getContext(), groupViewModel);
+            recyclerView.setAdapter(groupAdapter);
+        }
+        else
+            groupAdapter = (GroupAdapter)recyclerView.getAdapter();
+
+        groupAdapter.setGroupListItems(groupListItems);//item list 적용
+        groupAdapter.notifyDataSetChanged();//데이터 변경알림!
+    }
+
+    //TODO : 추가 테스트 후에 삭제
+    public void plusOnclick()
+    {
+        groupViewModel.addItem(new GroupListItem("전세환"));
+        groupViewModel.addItem(new GroupListItem("박준현"));
+        groupViewModel.addItem(new GroupListItem("이준영"));
+
+        binding.setViewModel(groupViewModel);
+
+
+
+        groupadd_btn = (ImageButton) v.findViewById(R.id.group_add_btn_groupmanagement);
+        groupadd_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                groupViewModel.addItem(new GroupListItem("test"));
+            }
+        });
     }
 }

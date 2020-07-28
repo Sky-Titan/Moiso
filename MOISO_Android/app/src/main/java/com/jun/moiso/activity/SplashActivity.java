@@ -3,6 +3,7 @@ package com.jun.moiso.activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -22,7 +23,7 @@ public class SplashActivity extends AppCompatActivity implements Animator {
         removeActionBar();
 
         TextView mosio_textview = (TextView) findViewById(R.id.moiso_text_splash);
-        doAnimation(mosio_textview,R.anim.alpha);
+        doAnimation(mosio_textview,R.anim.alpha_create);
     }
 
     //상,하단 바 제거

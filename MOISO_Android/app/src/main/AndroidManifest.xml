@@ -10,7 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme_notitle"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.SignInActivity"></activity>
+        <activity android:name=".activity.SignUpActivity"></activity>
+        <activity android:name=".activity.ControlActivity" />
+        <activity android:name=".activity.GroupActivity" />
+        <activity android:name=".activity.SignInActivity" />
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,10 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity"></activity>
+        <activity android:name=".activity.MainActivity" />
     </application>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 </manifest>

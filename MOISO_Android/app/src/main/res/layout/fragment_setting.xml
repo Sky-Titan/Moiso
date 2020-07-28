@@ -1,14 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingHorizontal="10dp"
     tools:context=".fragment.SettingFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/setting_text"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue_for_splash"
+        android:textStyle="bold"
+        android:text="Setting" />
 
-</FrameLayout>
+    <View
+        android:id="@+id/line_view"
+        android:background="@color/blue_for_splash"
+        app:layout_constraintTop_toBottomOf="@+id/setting_text"
+        android:layout_marginVertical="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"></View>
+
+    <LinearLayout
+        android:id="@+id/linearlayout_setting"
+        android:orientation="horizontal"
+        android:layout_marginTop="100dp"
+        app:layout_constraintTop_toBottomOf="@id/line_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="마우스 감도"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></TextView>
+            <NumberPicker
+                android:id="@+id/mouse_sensitivity_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></NumberPicker>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="마우스 휠 감도"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></TextView>
+            <NumberPicker
+                android:id="@+id/mousewheel_sensitivity_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></NumberPicker>
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/keyboardcustom_btn_setting"
+        android:textColor="@color/white"
+        android:text="키보드 커스텀"
+        android:paddingRight="10dp"
+        android:paddingLeft="20dp"
+        android:layout_marginTop="50dp"
+        android:drawableRight="@drawable/ic_twotone_keyboard_24"
+        android:background="@drawable/ripple_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearlayout_setting"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"></Button>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

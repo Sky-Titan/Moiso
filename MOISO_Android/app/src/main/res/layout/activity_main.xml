@@ -8,8 +8,10 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/fragment_container_viewpager"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomnavigation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp">
 
     </androidx.viewpager2.widget.ViewPager2>
 
@@ -19,11 +21,9 @@
         app:menu="@menu/bottomnavigation_menu"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         android:background="@color/white"
         app:layout_behavior="tech.thdev.app.view.BottomNavigationBehavior"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>

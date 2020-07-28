@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    
+    <data>
+        <variable
+            name="viewModel"
+            type="com.jun.moiso.viewmodel.MemberViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:paddingHorizontal="10dp"
+        tools:context=".activity.GroupActivity">
+    
+        <TextView
+            android:id="@+id/setting_text"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue_for_splash"
+            android:textStyle="bold"
+            android:text="Group Members" />
+    
+        <View
+            android:id="@+id/line_view"
+            android:background="@color/blue_for_splash"
+            app:layout_constraintTop_toBottomOf="@+id/setting_text"
+            android:layout_marginVertical="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"></View>
+
+        <LinearLayout
+            android:id="@+id/linearlayout_group"
+            android:layout_marginVertical="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line_view"
+            android:orientation="vertical"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/ip_edittext_group"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:hint="IP 주소를 입력해주세요."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></EditText>
+            <Button
+                android:id="@+id/connect_btn_group"
+                android:text="연결"
+                android:textColor="@color/white"
+                android:onClick="connectClick"
+                android:paddingRight="10dp"
+                android:paddingLeft="20dp"
+                android:background="@drawable/ripple_blue"
+                android:drawableRight="@drawable/ic_twotone_touch_app_24"
+                android:layout_marginVertical="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></Button>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/member_add_btn_group"
+            android:layout_marginVertical="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:src="@drawable/ic_twotone_person_add_48"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearlayout_group"></ImageButton>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview_group"
+            items="@{viewModel.item_list}"
+            android:layout_marginTop="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/member_add_btn_group"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            ></androidx.recyclerview.widget.RecyclerView>
+    
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
