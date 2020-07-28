@@ -64,7 +64,6 @@ public class GroupActivity extends AppCompatActivity {
             memberAdapter = (MemberAdapter)recyclerView.getAdapter();
 
         memberAdapter.setMemberListItems(memberListItems);//item list 적용
-        memberAdapter.notifyDataSetChanged();//데이터 변경알림!
     }
 
     //TODO : 추가 테스트 후에 삭제
