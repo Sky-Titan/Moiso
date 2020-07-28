@@ -47,7 +47,6 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview_groupmanagement"
             items="@{viewModel.item_list}"
-
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@+id/group_add_btn_groupmanagement"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -51,12 +51,14 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             public void onClick(View view) {
 
                 //TODO : 서버에서 삭제 작업
-                delelteAnimation(holder.itemView,position);
+                delelteAnimation(holder.itemView, view, holder.getAdapterPosition());
             }
         });
 
         createAnimation(holder.itemView,position);
     }
+
+
 
     //아이템 추가 애니메이션
     private void createAnimation(View viewToAnimate, int position) {
@@ -70,7 +72,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
     }
 
     //아이템 삭제 애니메이션
-    private void delelteAnimation(View viewToAnimate, final int position) {
+    private void delelteAnimation(final View viewToAnimate, final View delete_btn , final int position) {
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha_remove);
         animation.setInterpolator(new DecelerateInterpolator());
@@ -79,14 +81,15 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
+                //item list에서 제거
+                lockClickable(viewToAnimate, delete_btn);
+                memberViewModel.removeItem(position);
+                lastPosition--;
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                //item list에서 제거
-                memberViewModel.removeItem(position);
-                lastPosition--;
+                unlockClickable(viewToAnimate, delete_btn);
             }
 
             @Override
@@ -97,6 +100,18 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
 
     }
 
+    private void lockClickable(View item, View delete_btn)
+    {
+        item.setClickable(false);
+        delete_btn.setClickable(false);
+    }
+
+    private void unlockClickable(View item, View delete_btn)
+    {
+        item.setClickable(true);
+        delete_btn.setClickable(true);
+    }
+
     public ObservableArrayList<MemberListItem> getMemberListItems() {
         return memberListItems;
     }
@@ -104,8 +119,29 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
     public void setMemberListItems(ObservableArrayList<MemberListItem> memberListItems) {
         this.memberListItems.clear();
         this.memberListItems.addAll(memberListItems);
+
+        notifyItemChanged();
     }
 
+    //아이템 변경 알림
+    public void notifyItemChanged()
+    {
+        //item이 추가 되었는지, 삭제 되었는지 파악
+        if(memberViewModel.isAdd())
+        {
+            notifyItemInserted(memberViewModel.getAdd_position());
+            memberViewModel.setAdd(false);
+        }
+        else if(memberViewModel.isRemove())
+        {
+            notifyItemRemoved(memberViewModel.getRemove_position());
+            memberViewModel.setRemove(false);
+        }
+        else//todo : 내용 업데이트
+        {
+
+        }
+    }
     @Override
     public int getItemCount() {
         return memberListItems.size();

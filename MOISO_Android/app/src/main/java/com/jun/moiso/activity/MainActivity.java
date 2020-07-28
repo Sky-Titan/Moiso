@@ -2,7 +2,6 @@ package com.jun.moiso.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     //viewpager 생성
     public void setViewPager()
     {
-        viewPager = (ViewPager2) findViewById(R.id.fragment_container_viewpager);
+        viewPager = (ViewPager2) findViewById(R.id.viewpager_main);
         viewPager.setUserInputEnabled(false);//user 스크롤 막음
     }
 

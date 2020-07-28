@@ -72,7 +72,6 @@ public class GroupManagementFragment extends Fragment {
             groupAdapter = (GroupAdapter)recyclerView.getAdapter();
 
         groupAdapter.setGroupListItems(groupListItems);//item list 적용
-        groupAdapter.notifyDataSetChanged();//데이터 변경알림!
     }
 
     //TODO : 추가 테스트 후에 삭제
@@ -83,8 +82,6 @@ public class GroupManagementFragment extends Fragment {
         groupViewModel.addItem(new GroupListItem("이준영"));
 
         binding.setViewModel(groupViewModel);
-
-
 
         groupadd_btn = (ImageButton) v.findViewById(R.id.group_add_btn_groupmanagement);
         groupadd_btn.setOnClickListener(new View.OnClickListener() {
