@@ -2,4 +2,6 @@
 <resources>
     <dimen name="bottomnavigation_height">60dp</dimen>
     <dimen name="id_pw_textsize">12sp</dimen>
+    <dimen name="mouse_btn_radius">15dp</dimen>
+    <dimen name="floationg_btn_marign">20dp</dimen>
 </resources>

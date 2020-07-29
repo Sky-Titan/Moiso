@@ -22,6 +22,7 @@
     <color name="skyblue">#4374D9</color>
     <color name="gray_2">#434343</color>
     <color name="transparent">#00FF0000</color>
+    <color name="blue">#0063FF</color>
     <color name="blue_for_splash">#D51B62FF</color>
     <color name="light_gray_2">#F1F1F1</color>
     <color name="light_gray_3">#867A7A</color>
@@ -30,7 +31,7 @@
     <color name="ment_color">#613E40</color>
 
     <color name="Zero_pay">#002888</color>
-    <color name="blue">#0063FF</color>
+
     <color name="Kakao">#FCDD01</color>
     <color name="Card">#EB5061</color>
 
