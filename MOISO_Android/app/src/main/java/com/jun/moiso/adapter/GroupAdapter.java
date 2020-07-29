@@ -72,16 +72,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         createAnimation(holder.itemView,position);
     }
 
-    private void lockClickable(View item, View delete_btn)
-    {
-        item.setClickable(false);
-        delete_btn.setClickable(false);
-    }
-    private void unlockClickable(View item, View delete_btn)
-    {
-        item.setClickable(true);
-        delete_btn.setClickable(true);
-    }
+
     //아이템 추가 애니메이션
     private void createAnimation(View viewToAnimate, int position) {
         Log.i(TAG, "createAnimation");
@@ -125,6 +116,17 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             }
         });
 
+    }
+
+    private void lockClickable(View item, View delete_btn)
+    {
+        item.setClickable(false);
+        delete_btn.setClickable(false);
+    }
+    private void unlockClickable(View item, View delete_btn)
+    {
+        item.setClickable(true);
+        delete_btn.setClickable(true);
     }
 
     @Override

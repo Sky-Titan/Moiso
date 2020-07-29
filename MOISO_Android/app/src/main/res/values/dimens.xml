@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <dimen name="bottomnavigation_height">60dp</dimen>
     <dimen name="id_pw_textsize">12sp</dimen>
 </resources>
