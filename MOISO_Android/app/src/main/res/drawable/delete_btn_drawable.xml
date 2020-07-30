@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape
+            android:shape="oval">
+            <solid
+                android:color="@color/transparent"></solid>
+            <stroke
+                android:width="2dp"
+                android:color="@color/black"></stroke>
+
+            <size
+                android:width="50dp"
+                android:height="50dp"></size>
+        </shape>
+    </item>
+    <item
+        android:drawable="@drawable/ic_baseline_delete_outline_black_36">
+    </item>
+</layer-list>

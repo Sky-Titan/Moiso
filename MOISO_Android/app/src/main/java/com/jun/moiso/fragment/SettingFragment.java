@@ -1,5 +1,6 @@
 package com.jun.moiso.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,9 +8,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.NumberPicker;
 
 import com.jun.moiso.R;
+import com.jun.moiso.activity.KeyboardListActivity;
 
 
 public class SettingFragment extends Fragment {
@@ -30,10 +33,21 @@ public class SettingFragment extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_setting, container, false);
 
+        Button keyboard_custom = (Button) v.findViewById(R.id.keyboardcustom_btn_setting);
+        keyboard_custom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), KeyboardListActivity.class);
+                startActivity(intent);
+            }
+        });
+
         setNumberPickers();
 
         return v;
     }
+
+
 
     //마우스감도, 휠 감도 numberpicker 설정
     public void setNumberPickers()

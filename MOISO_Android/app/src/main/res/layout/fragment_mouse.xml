@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"></TextView>
         <Switch
             android:id="@+id/switch_mouse"
-            android:layout_marginHorizontal="10dp"
+            android:layout_marginHorizontal="20dp"
             android:thumb="@drawable/switch_thumb"
             android:track="@drawable/switch_track_selector"
             android:layout_width="wrap_content"

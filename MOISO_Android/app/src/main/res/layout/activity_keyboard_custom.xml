@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.KeyboardCustomActivity">
+
+
+
+    <AutoCompleteTextView
+        android:id="@+id/key_find_autocomplete_keyboardcustom"
+        android:drawableRight="@drawable/ic_baseline_search_24"
+        android:hint="키보드 버튼 검색"
+        android:completionHint="찾고자 하는 키보드 버튼을 검색하세요."
+        android:completionThreshold="1"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"/>
+
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/save_btn_keyboardcustom"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        app:rippleColor="@color/light_gray_4"
+        android:backgroundTint="@color/red"
+        android:src="@drawable/ic_baseline_save_24"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/delete_btn_keyboardcustom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        app:rippleColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:borderWidth="0dp"
+        android:clickable="true"
+        android:outlineAmbientShadowColor="@color/transparent"
+        android:outlineSpotShadowColor="@color/transparent"
+        android:backgroundTint="@color/transparent"
+        android:visibility="gone"
+        app:maxImageSize="55dp"
+        android:src="@drawable/delete_btn_drawable"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

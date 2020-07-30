@@ -18,44 +18,47 @@ import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jun.moiso.R;
-import com.jun.moiso.activity.GroupActivity;
-import com.jun.moiso.databinding.GrouplistItemBinding;
-import com.jun.moiso.model.GroupListItem;
-import com.jun.moiso.viewmodel.GroupViewModel;
+import com.jun.moiso.activity.KeyboardCustomActivity;
+import com.jun.moiso.databinding.KeyboardlistItemBinding;
+import com.jun.moiso.model.KeyboardListItem;
+import com.jun.moiso.viewmodel.KeyboardListViewModel;
 
-public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHolder<GrouplistItemBinding>> {
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
-    private static String TAG = "GroupAdapter";
 
-    private GroupViewModel groupViewModel;
+public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.KeyboardViewHolder<KeyboardlistItemBinding>> {
+
+    private static String TAG = "KeyboardAdapter";
+
+    private KeyboardListViewModel keyboardListViewModel;
 
     private int lastPosition = 0; //item list의 변경전 크기를 나타낸다.
 
-    private ObservableArrayList<GroupListItem> groupListItems = new ObservableArrayList<>() ;
+    private ObservableArrayList<KeyboardListItem> keyboardListItems = new ObservableArrayList<>() ;
     private Context context;
 
-    public GroupAdapter(Context context, GroupViewModel groupViewModel) {
+    public KeyboardAdapter(Context context, KeyboardListViewModel keyboardListViewModel) {
         this.context = context;
-        this.groupViewModel = groupViewModel;
+        this.keyboardListViewModel = keyboardListViewModel;
     }
 
     @NonNull
     @Override
-    public GroupViewHolder<GrouplistItemBinding> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public KeyboardViewHolder<KeyboardlistItemBinding> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.i(TAG, "onCreateViewHolder");
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new GroupViewHolder<>(inflater.inflate(R.layout.grouplist_item, parent, false));
+        return new KeyboardViewHolder<>(inflater.inflate(R.layout.keyboardlist_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final GroupViewHolder<GrouplistItemBinding> holder, int position) {
+    public void onBindViewHolder(@NonNull final KeyboardViewHolder<KeyboardlistItemBinding> holder, int position) {
         Log.i(TAG, "onBindViewHolder");
 
-        holder.binding().setItem(groupListItems.get(position));
+        holder.binding().setItem(keyboardListItems.get(position));
 
         //그룹 삭제 버튼 리스너
-        ImageButton delete = (ImageButton) holder.itemView.findViewById(R.id.groupdelete_btn_item);
+        ImageButton delete = (ImageButton) holder.itemView.findViewById(R.id.keyboarddelete_btn_item);
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,7 +104,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             public void onAnimationStart(Animation animation) {
                 //item list에서 제거
                 lockClickable(viewToAnimate, delete_btn);
-                groupViewModel.removeItem(position);
+                keyboardListViewModel.removeItem(position);
                 lastPosition--;
             }
 
@@ -131,18 +134,18 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
     @Override
     public int getItemCount() {
-        return groupListItems.size();
+        return keyboardListItems.size();
     }
 
-    public ObservableArrayList<GroupListItem> getGroupListItems() {
-        return groupListItems;
+    public ObservableArrayList<KeyboardListItem> getGroupListItems() {
+        return keyboardListItems;
     }
 
     //item list 변경 반영
-    public void setGroupListItems(ObservableArrayList<GroupListItem> groupListItems) {
+    public void setKeyboardListItems(ObservableArrayList<KeyboardListItem>  keyboardListItems) {
         //this.groupListItems = groupListItems;
-        this.groupListItems.clear();
-        this.groupListItems.addAll(groupListItems);
+        this.keyboardListItems.clear();
+        this.keyboardListItems.addAll(keyboardListItems);
 
         notifyItemChanged();
     }
@@ -151,15 +154,15 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     public void notifyItemChanged()
     {
         //item이 추가 되었는지, 삭제 되었는지 파악
-        if(groupViewModel.isAdd())
+        if(keyboardListViewModel.isAdd())
         {
-            notifyItemInserted(groupViewModel.getAdd_position());
-            groupViewModel.setAdd(false);
+            notifyItemInserted(keyboardListViewModel.getAdd_position());
+            keyboardListViewModel.setAdd(false);
         }
-        else if(groupViewModel.isRemove())
+        else if(keyboardListViewModel.isRemove())
         {
-            notifyItemRemoved(groupViewModel.getRemove_position());
-            groupViewModel.setRemove(false);
+            notifyItemRemoved(keyboardListViewModel.getRemove_position());
+            keyboardListViewModel.setRemove(false);
         }
         else//todo : 내용 업데이트
         {
@@ -167,18 +170,20 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         }
     }
 
-    class GroupViewHolder<T extends ViewDataBinding> extends RecyclerView.ViewHolder{
+    class KeyboardViewHolder<T extends ViewDataBinding> extends RecyclerView.ViewHolder{
         private final T binding;
 
-        public GroupViewHolder(final View v){
+        public KeyboardViewHolder(final View v){
             super(v);
             this.binding = (T) DataBindingUtil.bind(v);
             binding.getRoot().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //TODO : item 포지션에 따른 내용 삽입 수정
-                    Intent intent = new Intent(context, GroupActivity.class);
+                    Intent intent = new Intent(context, KeyboardCustomActivity.class);
+                    intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
+
 
                 }
             });

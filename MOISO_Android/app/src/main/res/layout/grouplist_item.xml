@@ -3,7 +3,7 @@
     <data>
         <variable
             name="item"
-            type="com.jun.moiso.item.GroupListItem" />
+            type="com.jun.moiso.model.GroupListItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

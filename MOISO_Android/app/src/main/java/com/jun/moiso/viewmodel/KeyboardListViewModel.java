@@ -2,18 +2,18 @@ package com.jun.moiso.viewmodel;
 
 import androidx.databinding.ObservableArrayList;
 
-import com.jun.moiso.model.MemberListItem;
+import com.jun.moiso.model.KeyboardListItem;
 
-public class MemberViewModel {
+public class KeyboardListViewModel {
 
-    private ObservableArrayList<MemberListItem> item_list = new ObservableArrayList<>();
+    private ObservableArrayList<KeyboardListItem> item_list = new ObservableArrayList<>();
     private int remove_position = 0;//삭제된 아이템 위치
     private int add_position = 0;//추가된 아이템 위치
     private boolean isRemove = false;//아이템 삭제 여부
     private boolean isAdd = false;//아이템 추가 여부
     private boolean isUpdate = false;//아이템 업데이트 여부
 
-    public MemberViewModel() {
+    public KeyboardListViewModel() {
 
     }
 
@@ -57,25 +57,24 @@ public class MemberViewModel {
         isUpdate = update;
     }
 
-    public void addItem(MemberListItem memberListItem)
+    public void addItem(KeyboardListItem keyboardListItem)
     {
-        item_list.add(memberListItem);
-        isAdd = true;
+        item_list.add(keyboardListItem);
         add_position = item_list.size()-1;
+        isAdd = true;
     }
 
     public void removeItem(int position)
     {
         item_list.remove(position);
-        isRemove = true;
         remove_position = position;
+        isRemove = true;
     }
-
-    public ObservableArrayList<MemberListItem> getItem_list() {
+    public ObservableArrayList<KeyboardListItem> getItem_list() {
         return item_list;
     }
 
-    public void setItem_list(ObservableArrayList<MemberListItem> item_list) {
+    public void setItem_list(ObservableArrayList<KeyboardListItem> item_list) {
         this.item_list = item_list;
     }
 }

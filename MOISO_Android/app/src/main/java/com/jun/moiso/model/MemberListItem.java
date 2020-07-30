@@ -1,4 +1,4 @@
-package com.jun.moiso.item;
+package com.jun.moiso.model;
 
 public class MemberListItem {
 

@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
-import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,12 +14,9 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.jun.moiso.R;
-import com.jun.moiso.adapter.GroupAdapter;
 import com.jun.moiso.adapter.MemberAdapter;
 import com.jun.moiso.databinding.ActivityGroupBinding;
-import com.jun.moiso.item.GroupListItem;
-import com.jun.moiso.item.MemberListItem;
-import com.jun.moiso.viewmodel.GroupViewModel;
+import com.jun.moiso.model.MemberListItem;
 import com.jun.moiso.viewmodel.MemberViewModel;
 
 public class GroupActivity extends AppCompatActivity {

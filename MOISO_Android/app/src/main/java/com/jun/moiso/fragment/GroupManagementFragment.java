@@ -2,9 +2,6 @@ package com.jun.moiso.fragment;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
@@ -20,7 +17,7 @@ import android.widget.ImageButton;
 import com.jun.moiso.R;
 import com.jun.moiso.adapter.GroupAdapter;
 import com.jun.moiso.databinding.FragmentGroupManagementBinding;
-import com.jun.moiso.item.GroupListItem;
+import com.jun.moiso.model.GroupListItem;
 import com.jun.moiso.viewmodel.GroupViewModel;
 
 public class GroupManagementFragment extends Fragment {

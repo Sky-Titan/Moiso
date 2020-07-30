@@ -2,7 +2,7 @@ package com.jun.moiso.viewmodel;
 
 import androidx.databinding.ObservableArrayList;
 
-import com.jun.moiso.item.GroupListItem;
+import com.jun.moiso.model.GroupListItem;
 
 
 public class GroupViewModel {
