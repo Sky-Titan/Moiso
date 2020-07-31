@@ -13,9 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jun.moiso.R;
@@ -45,13 +43,13 @@ public class KeyboardCustomActivity extends AppCompatActivity {
         getAnimations();
 
         delete_btn = (FloatingActionButton)findViewById(R.id.delete_btn_keyboardcustom);
+        setChildViewDragListener(delete_btn);
 
         //autocompletelist의 drop down 버튼 list 세팅
         settingList();
 
         //저장버튼
         save_btn = (FloatingActionButton)findViewById(R.id.save_btn_keyboardcustom);
-
         setChildViewDragListener(save_btn);
 
         //드래그앤 드롭
@@ -61,13 +59,13 @@ public class KeyboardCustomActivity extends AppCompatActivity {
 
     }
 
-    public void getAnimations()
+    private void getAnimations()
     {
         create_animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha_create_for_del_btn);
         delete_animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha_remove_for_del_btn);
     }
 
-    public void setAutoCompleteTextView(final ViewGroup parent_layout)
+    private void setAutoCompleteTextView(final ViewGroup parent_layout)
     {
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.key_find_autocomplete_keyboardcustom);
         autoCompleteTextView.setAdapter(new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,list));
@@ -96,7 +94,7 @@ public class KeyboardCustomActivity extends AppCompatActivity {
     }
 
     //드래그할 자식뷰의 리스너 설정
-    public void setChildViewDragListener(View childView)
+    private void setChildViewDragListener(View childView)
     {
         childView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -106,19 +104,13 @@ public class KeyboardCustomActivity extends AppCompatActivity {
                     view.startDragAndDrop(null,shadowBuilder,null,View.DRAG_FLAG_GLOBAL);
                     dragView = view;
 
-                    //삭제 버튼 나타남
-                    if(dragView.getClass() == Button.class) {
-                        delete_btn.setVisibility(View.VISIBLE);
-                        delete_btn.startAnimation(create_animation);
-                    }
-
                 return true;
             }
         });
     }
 
     //activity 드래그앤드롭 설정
-    public void setDragAndDrop(final ViewGroup parentView)
+    private void setDragAndDrop(final ViewGroup parentView)
     {
         parentView.setOnDragListener(new View.OnDragListener() {
             @Override
@@ -138,27 +130,14 @@ public class KeyboardCustomActivity extends AppCompatActivity {
 
                     case DragEvent.ACTION_DRAG_ENDED:
 
+                        moveButton();
+
                         //버튼 삭제 처리
                         if(dragView.getClass() == Button.class && isInDelteBtn(dx,dy))
-                        {
-                            dragView.startAnimation(delete_animation);
-                            parentView.removeView(dragView);
-                        }
-                        else {
-                            //버튼 이동 처리
-                            dragView.setX(dx - dragView.getWidth() / 2);
-                            dragView.setY(dy - dragView.getHeight() / 2);
-                        }
-
-                        //삭제 버튼 사라짐
-                        if(delete_btn.getVisibility() == View.VISIBLE)
-                        {
-                            delete_btn.startAnimation(delete_animation);
-                            delete_btn.setVisibility(View.GONE);
-                        }
+                            deleteButton(parentView);
 
                         break;
-                    }
+                }
 
 
                 return true;
@@ -166,14 +145,35 @@ public class KeyboardCustomActivity extends AppCompatActivity {
         });
     }
 
-    public boolean isInDelteBtn(float dx, float dy)
+    //버튼 이동 처리
+    private void moveButton()
+    {
+        dragView.setX(dx - dragView.getWidth() / 2);
+        dragView.setY(dy - dragView.getHeight() / 2);
+    }
+
+    //버튼 삭제 처리
+    private void deleteButton(ViewGroup parentView)
+    {
+        delete_btn.setEnabled(true);
+        delete_btn.setPressed(true);
+
+        Animation animation = AnimationUtils.loadAnimation(this,R.anim.scale_up_for_del_btn);
+        delete_btn.startAnimation(animation);
+        dragView.startAnimation(delete_animation);
+        parentView.removeView(dragView);
+        delete_btn.setPressed(false);
+        delete_btn.setEnabled(false);
+    }
+
+    private boolean isInDelteBtn(float dx, float dy)
     {
         if(delete_btn.getX() <= dx && dx <= delete_btn.getX() + delete_btn.getWidth() && delete_btn.getY() <= dy && dy <= delete_btn.getY() +delete_btn.getHeight())
             return true;
         return false;
     }
 
-    public void settingList()
+    private void settingList()
     {
         list.add("ESC");
 
