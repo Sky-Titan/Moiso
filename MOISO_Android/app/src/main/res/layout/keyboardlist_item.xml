@@ -3,7 +3,7 @@
     <data>
         <variable
             name="item"
-            type="com.jun.moiso.model.KeyboardListItem" />
+            type="com.jun.moiso.model.CustomKeyboard" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

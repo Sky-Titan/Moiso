@@ -38,7 +38,7 @@ public class GroupActivity extends AppCompatActivity {
         //TODO : 나중에 삭제
         plusOnclick();
 
-        context = getApplicationContext();
+        context = GroupActivity.this;
     }
 
     //viewmodel의 item list에 변경 생길 때마다 호출

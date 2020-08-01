@@ -1,5 +1,6 @@
 package com.jun.moiso.activity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
@@ -8,14 +9,18 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.EditText;
 
+import com.jun.moiso.MyApplication;
 import com.jun.moiso.R;
 import com.jun.moiso.adapter.KeyboardAdapter;
+import com.jun.moiso.database.KeyboardDB;
 import com.jun.moiso.databinding.ActivityKeyboardListBinding;
-import com.jun.moiso.model.KeyboardListItem;
+import com.jun.moiso.model.CustomKeyboard;
 import com.jun.moiso.viewmodel.KeyboardListViewModel;
 
 public class KeyboardListActivity extends AppCompatActivity {
@@ -23,8 +28,12 @@ public class KeyboardListActivity extends AppCompatActivity {
     private static KeyboardAdapter keyboardAdapter;
     ActivityKeyboardListBinding binding;
 
+    private MyApplication myApplication;
+    private KeyboardDB keyboardDB;
+
     private static KeyboardListViewModel viewModel;
     private static Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,15 +41,17 @@ public class KeyboardListActivity extends AppCompatActivity {
         viewModel = new KeyboardListViewModel();
         binding.setViewModel(viewModel);
 
-        //TODO : 나중에 삭제
-        plusOnclick();
+        myApplication = (MyApplication)getApplication();
+        keyboardDB = KeyboardDB.getInstance(this);
 
-        context = getApplicationContext();
+        viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
+
+        context = KeyboardListActivity.this;
     }
 
     //viewmodel의 item list에 변경 생길 때마다 호출
     @BindingAdapter("items")
-    public static void setItems(RecyclerView recyclerView, ObservableArrayList<KeyboardListItem> keyboardListItems)
+    public static void setItems(RecyclerView recyclerView, ObservableArrayList<CustomKeyboard> customKeyboards)
     {
         //Recyclerview 초기화
         if(recyclerView.getAdapter() == null)
@@ -56,23 +67,35 @@ public class KeyboardListActivity extends AppCompatActivity {
         else
             keyboardAdapter = (KeyboardAdapter)recyclerView.getAdapter();
 
-        keyboardAdapter.setKeyboardListItems(keyboardListItems);//item list 적용
+        keyboardAdapter.setCustomKeyboardList(customKeyboards);//item list 적용
     }
 
-    //TODO : 추가 테스트 후에 삭제
-    public void plusOnclick()
+    //커스텀 키보드 추가 리스너
+    public void addCustomOnClikc(View v)
     {
-        viewModel.addItem(new KeyboardListItem("test"));
-        viewModel.addItem(new KeyboardListItem("test"));
-        viewModel.addItem(new KeyboardListItem("test"));
+        //키보드 커스텀 이름 이력 후 생성하는 액티비티
+        View dialogView = getLayoutInflater().inflate(R.layout.create_keyboardcustom_dialog, null);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.custom_name_edittext_dialog);
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
 
-        ImageButton keyboardcustom_add_btn = (ImageButton) findViewById(R.id.keyboardcustom_add_btn_keyboardlist);
-        keyboardcustom_add_btn.setOnClickListener(new View.OnClickListener() {
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                viewModel.addItem(new KeyboardListItem("test"));
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //키보드 커스텀 생성 후 추가
+                viewModel.addItem(keyboardDB.insertCustom(editText.getText().toString(), myApplication.getUser_id()));
             }
         });
+
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();;
     }
 }

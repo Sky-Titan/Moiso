@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class CustomKeyboard {
 
-    private String custom_id;
+    private int custom_id;
     private String custom_name;
     private String owner_id;
     private ArrayList<Button> buttons = new ArrayList<>();
@@ -16,17 +16,17 @@ public class CustomKeyboard {
 
     }
 
-    public CustomKeyboard(String custom_id, String custom_name, String owner_id) {
+    public CustomKeyboard(int custom_id, String custom_name, String owner_id) {
         this.custom_id = custom_id;
         this.custom_name = custom_name;
         this.owner_id = owner_id;
     }
 
-    public String getCustom_id() {
+    public int getCustom_id() {
         return custom_id;
     }
 
-    public void setCustom_id(String custom_id) {
+    public void setCustom_id(int custom_id) {
         this.custom_id = custom_id;
     }
 

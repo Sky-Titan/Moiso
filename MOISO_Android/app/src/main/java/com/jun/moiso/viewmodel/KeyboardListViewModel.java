@@ -2,11 +2,11 @@ package com.jun.moiso.viewmodel;
 
 import androidx.databinding.ObservableArrayList;
 
-import com.jun.moiso.model.KeyboardListItem;
+import com.jun.moiso.model.CustomKeyboard;
 
 public class KeyboardListViewModel {
 
-    private ObservableArrayList<KeyboardListItem> item_list = new ObservableArrayList<>();
+    private ObservableArrayList<CustomKeyboard> item_list = new ObservableArrayList<>();
     private int remove_position = 0;//삭제된 아이템 위치
     private int add_position = 0;//추가된 아이템 위치
     private boolean isRemove = false;//아이템 삭제 여부
@@ -57,9 +57,9 @@ public class KeyboardListViewModel {
         isUpdate = update;
     }
 
-    public void addItem(KeyboardListItem keyboardListItem)
+    public void addItem(CustomKeyboard customKeyboard)
     {
-        item_list.add(keyboardListItem);
+        item_list.add(customKeyboard);
         add_position = item_list.size()-1;
         isAdd = true;
     }
@@ -70,11 +70,12 @@ public class KeyboardListViewModel {
         remove_position = position;
         isRemove = true;
     }
-    public ObservableArrayList<KeyboardListItem> getItem_list() {
+    public ObservableArrayList<CustomKeyboard> getItem_list() {
         return item_list;
     }
 
-    public void setItem_list(ObservableArrayList<KeyboardListItem> item_list) {
-        this.item_list = item_list;
+    public void setItem_list(ObservableArrayList<CustomKeyboard> item_list) {
+        this.item_list.clear();
+        this.item_list.addAll(item_list);
     }
 }

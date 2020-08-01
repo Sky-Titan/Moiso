@@ -2,15 +2,15 @@ package com.jun.moiso.model;
 
 public class CustomButton {
 
-    private String button_id;
+    private int button_id;
     private String key;
     private float pos_x, pos_y;
-    private String custom_id;
+    private int custom_id;
 
     public CustomButton() {
     }
 
-    public CustomButton(String button_id, String key, float pos_x, float pos_y, String custom_id) {
+    public CustomButton(int button_id, String key, float pos_x, float pos_y, int custom_id) {
         this.button_id = button_id;
         this.key = key;
         this.pos_x = pos_x;
@@ -18,11 +18,11 @@ public class CustomButton {
         this.custom_id = custom_id;
     }
 
-    public String getButton_id() {
+    public int getButton_id() {
         return button_id;
     }
 
-    public void setButton_id(String button_id) {
+    public void setButton_id(int button_id) {
         this.button_id = button_id;
     }
 
@@ -38,7 +38,7 @@ public class CustomButton {
         return pos_x;
     }
 
-    public void setPos_x(int pos_x) {
+    public void setPos_x(float pos_x) {
         this.pos_x = pos_x;
     }
 
@@ -46,15 +46,15 @@ public class CustomButton {
         return pos_y;
     }
 
-    public void setPos_y(int pos_y) {
+    public void setPos_y(float pos_y) {
         this.pos_y = pos_y;
     }
 
-    public String getCustom_id() {
+    public int getCustom_id() {
         return custom_id;
     }
 
-    public void setCustom_id(String custom_id) {
+    public void setCustom_id(int custom_id) {
         this.custom_id = custom_id;
     }
 }

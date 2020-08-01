@@ -2,6 +2,7 @@ package com.jun.moiso.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,9 +12,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.jun.moiso.R;
-import com.jun.moiso.interfaces.Animator;
 
-public class SplashActivity extends AppCompatActivity implements Animator {
+public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

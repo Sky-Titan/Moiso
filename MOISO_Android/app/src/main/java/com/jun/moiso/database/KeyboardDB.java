@@ -5,10 +5,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Button;
 
+import androidx.databinding.ObservableArrayList;
+
 import com.jun.moiso.model.CustomButton;
 import com.jun.moiso.model.CustomKeyboard;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 public class KeyboardDB {
 
@@ -17,7 +20,7 @@ public class KeyboardDB {
     private static MyDBHelper myDBHelper;
 
 
-    public KeyboardDB getInstance(Context context)
+    public static KeyboardDB getInstance(Context context)
     {
         if(keyboardDB == null)
             keyboardDB = new KeyboardDB(context);
@@ -31,52 +34,88 @@ public class KeyboardDB {
 
         db.execSQL("CREATE TABLE IF NOT EXISTS Custom (custom_id INTEGER PRIMARY KEY AUTOINCREMENT, custom_name TEXT, owner_id TEXT)");
         db.execSQL("CREATE TABLE IF NOT EXISTS Button (button_id INTEGER PRIMARY KEY AUTOINCREMENT, button_key TEXT," +
-                " pos_x FLOAT, pos_y FLOAT, custom_id TEXT, FOREIGN KEY (custom_id) REFERENCES Custom(custom_id) )");
+                " pos_x FLOAT, pos_y FLOAT, custom_id INTEGER, FOREIGN KEY (custom_id) REFERENCES Custom(custom_id) )");
     }
 
     //커스텀 키보드 생성
-    public void insertCustom(String custom_name, String owner_id)
+    public CustomKeyboard insertCustom(String custom_name, String owner_id)
     {
         db.execSQL("INSERT INTO Custom (custom_name, owner_id) VALUES('"+custom_name+"','"+owner_id+"')");
+        return selectRecentCustom();
     }
 
     //버튼 생성
-    public void insertButton(String button_key, float pos_x, float pos_y, String custom_id)
+    public CustomButton insertButton(String button_key, float pos_x, float pos_y, int custom_id)
     {
-        db.execSQL("INSERT INTO Button (button_key, pos_x, pos_y, custom_id) VALUES('"+button_key+"', "+pos_x+", "+pos_y+", '"+custom_id+"')");
+        db.execSQL("INSERT INTO Button (button_key, pos_x, pos_y, custom_id) VALUES('"+button_key+"', "+pos_x+", "+pos_y+", "+custom_id+")");
+        return selectRecentButton();
+
     }
 
     //커스텀 키보드 삭제
-    public void deleteCustom(String custom_id)
+    public void deleteCustom(int custom_id)
     {
         db.execSQL("DELETE FROM Custom WHERE custom_id = "+custom_id+"");
     }
 
     //버튼 삭제
-    public void deleteButton(String button_id)
+    public void deleteButton(int button_id)
     {
         db.execSQL("DELETE FROM Button WHERE button_id = "+button_id+"");
     }
 
     //버튼 위치 수정
-    public void updateButtonPos(String button_id, float pos_x, float pos_y)
+    public void updateButtonPos(int button_id, float pos_x, float pos_y)
     {
         db.execSQL("UPDATE Button SET pos_x ="+pos_x+", pos_y="+pos_y+" WHERE button_id = "+button_id+"");
     }
 
-    //커스텀 키보드 불러오기
-    public ArrayList<CustomKeyboard> selectCustomOf(String owner_id)
+    //가장 최근에 추가된 커스텀키보드 row 불러옴
+    public CustomKeyboard selectRecentCustom()
     {
-        ArrayList<CustomKeyboard> customKeyboards = new ArrayList<>();
+        Cursor cursor = db.rawQuery("SELECT * FROM Custom ORDER BY custom_id DESC LIMIT 1", null);
+        CustomKeyboard customKeyboard = new CustomKeyboard();
+
+        while(cursor.moveToNext())
+        {
+            customKeyboard.setCustom_id(cursor.getInt(0));
+            customKeyboard.setCustom_name(cursor.getString(1));
+            customKeyboard.setOwner_id(cursor.getString(2));
+        }
+        return customKeyboard;
+    }
+
+    //가장 최근에 추가된 커스텀키보드 row 불러옴
+    public CustomButton selectRecentButton()
+    {
+        Cursor cursor = db.rawQuery("SELECT * FROM Button ORDER BY button_id DESC LIMIT 1", null);
+        CustomButton customButton = new CustomButton();
+
+        while(cursor.moveToNext())
+        {
+            customButton.setButton_id(cursor.getInt(0));
+            customButton.setKey(cursor.getString(1));
+            customButton.setPos_x(cursor.getFloat(2));
+            customButton.setPos_y(cursor.getFloat(3));
+            customButton.setCustom_id(cursor.getInt(4));
+
+        }
+        return customButton;
+    }
+
+    //커스텀 키보드 불러오기
+    public ObservableArrayList<CustomKeyboard> selectCustomOf(String owner_id)
+    {
+        ObservableArrayList<CustomKeyboard> customKeyboards = new ObservableArrayList<>();
 
         Cursor cursor = db.rawQuery("SELECT custom_id, custom_name FROM Custom WHERE owner_id = '"+owner_id+"'", null);
 
         while(cursor.moveToNext())
         {
-            String custom_id = cursor.getString(0);
+            int custom_id = cursor.getInt(0);
             String custom_name = cursor.getString(1);
 
-            CustomKeyboard customKeyboard = new CustomKeyboard(custom_id,owner_id,custom_name);
+            CustomKeyboard customKeyboard = new CustomKeyboard(custom_id,custom_name, owner_id);
             customKeyboards.add(customKeyboard);
         }
         cursor.close();
@@ -84,14 +123,14 @@ public class KeyboardDB {
     }
 
     //커스텀 id의 버튼들 불러오기
-    public ArrayList<CustomButton> selectButtonsOf(String custom_id){
-        ArrayList<CustomButton> buttons = new ArrayList<>();
+    public ObservableArrayList<CustomButton> selectButtonsOf(int custom_id){
+        ObservableArrayList<CustomButton> buttons = new ObservableArrayList<>();
 
         Cursor cursor = db.rawQuery("SELECT * FROM Button WHERE custom_id = "+custom_id+"", null);
 
         while(cursor.moveToNext())
         {
-            String button_id = cursor.getString(0);
+            int button_id = cursor.getInt(0);
             String button_key = cursor.getString(1);
             float pos_x = cursor.getFloat(2);
             float pos_y = cursor.getFloat(3);

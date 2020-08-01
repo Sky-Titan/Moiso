@@ -1,6 +1,8 @@
 package com.jun.moiso.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,8 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jun.moiso.R;
 import com.jun.moiso.activity.KeyboardCustomActivity;
+import com.jun.moiso.database.KeyboardDB;
 import com.jun.moiso.databinding.KeyboardlistItemBinding;
-import com.jun.moiso.model.KeyboardListItem;
+import com.jun.moiso.model.CustomKeyboard;
+
 import com.jun.moiso.viewmodel.KeyboardListViewModel;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -33,13 +37,14 @@ public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.Keyboa
     private KeyboardListViewModel keyboardListViewModel;
 
     private int lastPosition = 0; //item list의 변경전 크기를 나타낸다.
-
-    private ObservableArrayList<KeyboardListItem> keyboardListItems = new ObservableArrayList<>() ;
+    private KeyboardDB keyboardDB;
+    private ObservableArrayList<CustomKeyboard> customKeyboards = new ObservableArrayList<>() ;
     private Context context;
 
     public KeyboardAdapter(Context context, KeyboardListViewModel keyboardListViewModel) {
         this.context = context;
         this.keyboardListViewModel = keyboardListViewModel;
+        keyboardDB = KeyboardDB.getInstance(context);
     }
 
     @NonNull
@@ -55,19 +60,52 @@ public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.Keyboa
     public void onBindViewHolder(@NonNull final KeyboardViewHolder<KeyboardlistItemBinding> holder, int position) {
         Log.i(TAG, "onBindViewHolder");
 
-        holder.binding().setItem(keyboardListItems.get(position));
+        holder.binding().setItem(customKeyboards.get(position));
+        final String custom_name = holder.binding().getItem().getCustom_name();
+        final int custom_id = holder.binding().getItem().getCustom_id();
+        final String owner_id = holder.binding().getItem().getOwner_id();
 
-        //그룹 삭제 버튼 리스너
+        holder.binding().getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, KeyboardCustomActivity.class);
+                intent.putExtra("custom_id", custom_id);
+                intent.putExtra("custom_name", custom_name);
+                intent.putExtra("owner_id", owner_id);
+                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
+        //삭제 버튼 리스너
         ImageButton delete = (ImageButton) holder.itemView.findViewById(R.id.keyboarddelete_btn_item);
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
 
-                //TODO : 서버에서 삭제 작업
+                //TODO : db에서 삭제 작업
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                //삭제 도중 중복 클릭 방지
+                builder.setTitle(custom_name+" 삭제").setMessage("정말로 삭제하시겠습니까?");
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //삭제 처리
+                        keyboardDB.deleteCustom(custom_id);
 
-                delelteAnimation(holder.itemView, view,holder.getAdapterPosition());
+                        //삭제 도중 중복 클릭 방지
+                        delelteAnimation(holder.itemView, view, holder.getAdapterPosition());
+                    }
+                });
+                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
 
             }
         });
@@ -134,18 +172,18 @@ public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.Keyboa
 
     @Override
     public int getItemCount() {
-        return keyboardListItems.size();
+        return customKeyboards.size();
     }
 
-    public ObservableArrayList<KeyboardListItem> getGroupListItems() {
-        return keyboardListItems;
+    public ObservableArrayList<CustomKeyboard> getCustomKeyboards() {
+        return customKeyboards;
     }
 
     //item list 변경 반영
-    public void setKeyboardListItems(ObservableArrayList<KeyboardListItem>  keyboardListItems) {
+    public void setCustomKeyboardList(ObservableArrayList<CustomKeyboard>  customKeyboards) {
         //this.groupListItems = groupListItems;
-        this.keyboardListItems.clear();
-        this.keyboardListItems.addAll(keyboardListItems);
+        this.customKeyboards.clear();
+        this.customKeyboards.addAll(customKeyboards);
 
         notifyItemChanged();
     }
@@ -176,18 +214,16 @@ public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.Keyboa
         public KeyboardViewHolder(final View v){
             super(v);
             this.binding = (T) DataBindingUtil.bind(v);
-            binding.getRoot().setOnClickListener(new View.OnClickListener() {
+      /*      binding.getRoot().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //TODO : item 포지션에 따른 내용 삽입 수정
-                    Intent intent = new Intent(context, KeyboardCustomActivity.class);
-                    intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(intent);
+
 
 
                 }
             });
-
+*/
         }
 
         public T binding() {

@@ -10,7 +10,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.jun.moiso.R;
-import com.jun.moiso.interfaces.Animator;
 
 public class SignInActivity extends AppCompatActivity {
 

@@ -1,5 +1,6 @@
 package com.jun.moiso.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.databinding.BindingAdapter;
@@ -27,6 +28,7 @@ public class GroupManagementFragment extends Fragment {
     private FragmentGroupManagementBinding binding;
     private ImageButton groupadd_btn;
 
+    private static Context context;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +46,7 @@ public class GroupManagementFragment extends Fragment {
         groupViewModel = new GroupViewModel();
         //TODO : 추가 테스트 후에 삭제
         plusOnclick();
-
+        context = getActivity();
         return v;
     }
 
@@ -62,7 +64,7 @@ public class GroupManagementFragment extends Fragment {
             recyclerView.addItemDecoration(dividerItemDecoration);
 
             //adapter 적용
-            groupAdapter = new GroupAdapter(v.getContext(), groupViewModel);
+            groupAdapter = new GroupAdapter(context, groupViewModel);
             recyclerView.setAdapter(groupAdapter);
         }
         else
