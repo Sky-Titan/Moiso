@@ -49,19 +49,19 @@ public class KeyboardDB {
     //커스텀 키보드 삭제
     public void deleteCustom(String custom_id)
     {
-        db.execSQL("DELETE FROM Custom WHERE custom_id = '"+custom_id+"'");
+        db.execSQL("DELETE FROM Custom WHERE custom_id = "+custom_id+"");
     }
 
     //버튼 삭제
     public void deleteButton(String button_id)
     {
-        db.execSQL("DELETE FROM Button WHERE button_id = '"+button_id+"'");
+        db.execSQL("DELETE FROM Button WHERE button_id = "+button_id+"");
     }
 
     //버튼 위치 수정
     public void updateButtonPos(String button_id, float pos_x, float pos_y)
     {
-        db.execSQL("UPDATE Button SET pos_x ="+pos_x+", pos_y="+pos_y+" WHERE button_id = '"+button_id+"'");
+        db.execSQL("UPDATE Button SET pos_x ="+pos_x+", pos_y="+pos_y+" WHERE button_id = "+button_id+"");
     }
 
     //커스텀 키보드 불러오기
@@ -69,7 +69,7 @@ public class KeyboardDB {
     {
         ArrayList<CustomKeyboard> customKeyboards = new ArrayList<>();
 
-        Cursor cursor = db.rawQuery("SELECT custom_id, custom_name FROM Custom WHERE owner_id = "+owner_id+"", null);
+        Cursor cursor = db.rawQuery("SELECT custom_id, custom_name FROM Custom WHERE owner_id = '"+owner_id+"'", null);
 
         while(cursor.moveToNext())
         {
