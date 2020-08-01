@@ -291,10 +291,10 @@ public class KeyboardCustomActivity extends AppCompatActivity {
 
         list.add("Window");
 
-        list.add("↑");
-        list.add("↓");
-        list.add("←");
-        list.add("→");
+        list.add("UP");
+        list.add("DOWN");
+        list.add("LEFT");
+        list.add("RIGHT");
 
 
         //알파벳
