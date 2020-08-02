@@ -1,10 +1,14 @@
 package com.jun.moiso.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.ObservableArrayList;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +17,12 @@ import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jun.moiso.R;
-import com.jun.moiso.activity.ControlActivity;
+import com.jun.moiso.activity.KeyboardListActivity;
+import com.jun.moiso.database.KeyboardDB;
+import com.jun.moiso.model.CustomButton;
+import com.jun.moiso.model.CustomKeyboard;
+
+import java.util.ArrayList;
 
 public class KeyboardFragment extends Fragment {
 
@@ -22,9 +31,14 @@ public class KeyboardFragment extends Fragment {
     public View dragView;//현재 드래그 된 view
     private float dx,dy;
 
+    private KeyboardDB keyboardDB;
+
     private static final String TAG = "KeyboardFragment";
+    private CustomKeyboard customKeyboard;
 
     private FloatingActionButton callCustom_btn;
+
+    private ArrayList<Button> buttonArrayList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,11 +52,15 @@ public class KeyboardFragment extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_keyboard, container, false);
 
+        keyboardDB = KeyboardDB.getInstance(getContext());
+
+        //커스텀 불러오기 버튼
         callCustom_btn = (FloatingActionButton) v.findViewById(R.id.call_custom_fab_keyboardfragment);
         callCustom_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getContext(), KeyboardListActivity.class);
+                startActivityForResult(intent, 0);
             }
         });
         setChildViewDragListener(callCustom_btn);
@@ -50,6 +68,57 @@ public class KeyboardFragment extends Fragment {
         setDragAndDrop((ViewGroup) v);
 
         return v;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 0)
+        {
+            if(resultCode == Activity.RESULT_OK)
+            {
+                customKeyboard = new CustomKeyboard(data.getIntExtra("custom_id",0), data.getStringExtra("custom_name"), data.getStringExtra("owner_id"));
+                getButtons(customKeyboard.getCustom_id(), (ViewGroup) v);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        if(customKeyboard!=null)
+            getButtons(customKeyboard.getCustom_id(), (ViewGroup) v);
+        super.onResume();
+
+    }
+
+    //맨 처음 버튼들 불러오기
+    private void getButtons(int custom_id, ViewGroup parent_layout)
+    {
+        parent_layout.removeAllViews();
+        parent_layout.addView(callCustom_btn);
+        buttonArrayList.clear();
+
+        ObservableArrayList<CustomButton> customButtons = keyboardDB.selectButtonsOf(custom_id);
+
+        for(int i=0;i<customButtons.size();i++)
+        {
+            CustomButton customButton = customButtons.get(i);
+
+            Button btn = new Button(getContext());
+            btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            btn.setPadding(5,5,5,5);
+            btn.setBackground(getActivity().getDrawable(R.drawable.mouse_center_btn_layout));
+            btn.setTag(customButton.getButton_id());
+            btn.setText(customButton.getKey());
+            btn.setX(customButton.getPos_x());
+            btn.setY(customButton.getPos_y());
+
+            buttonArrayList.add(btn);
+
+            //부모 레이아웃에 추가
+            parent_layout.addView(btn);
+        }
     }
 
     //activity 드래그앤드롭 설정
@@ -64,13 +133,10 @@ public class KeyboardFragment extends Fragment {
                         case DragEvent.ACTION_DRAG_LOCATION:
                             dx = dragEvent.getX();
                             dy = dragEvent.getY();
-                            Log.d(TAG, "MOVED");
                             break;
 
                         case DragEvent.ACTION_DRAG_ENDED:
-                            Log.d(TAG, "ended");
                             moveButton();
-
                             break;
                     }
 

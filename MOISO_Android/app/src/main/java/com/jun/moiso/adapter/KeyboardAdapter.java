@@ -1,5 +1,6 @@
 package com.jun.moiso.adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jun.moiso.R;
 import com.jun.moiso.activity.KeyboardCustomActivity;
+import com.jun.moiso.activity.KeyboardListActivity;
 import com.jun.moiso.database.KeyboardDB;
 import com.jun.moiso.databinding.KeyboardlistItemBinding;
 import com.jun.moiso.model.CustomKeyboard;
@@ -35,15 +37,17 @@ public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.Keyboa
     private static String TAG = "KeyboardAdapter";
 
     private KeyboardListViewModel keyboardListViewModel;
+    private KeyboardListActivity activity;
 
     private int lastPosition = 0; //item list의 변경전 크기를 나타낸다.
     private KeyboardDB keyboardDB;
     private ObservableArrayList<CustomKeyboard> customKeyboards = new ObservableArrayList<>() ;
     private Context context;
 
-    public KeyboardAdapter(Context context, KeyboardListViewModel keyboardListViewModel) {
+    public KeyboardAdapter(Context context, KeyboardListViewModel keyboardListViewModel, KeyboardListActivity activity) {
         this.context = context;
         this.keyboardListViewModel = keyboardListViewModel;
+        this.activity = activity;
         keyboardDB = KeyboardDB.getInstance(context);
     }
 
@@ -68,12 +72,34 @@ public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.Keyboa
         holder.binding().getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, KeyboardCustomActivity.class);
-                intent.putExtra("custom_id", custom_id);
-                intent.putExtra("custom_name", custom_name);
-                intent.putExtra("owner_id", owner_id);
-                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                builder.setTitle(custom_name).setMessage("작업을 선택해주세요.");
+                builder.setNegativeButton("사용", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent();
+                        intent.putExtra("custom_id", custom_id);
+                        intent.putExtra("custom_name", custom_name);
+                        intent.putExtra("owner_id", owner_id);
+                        activity.setResult(Activity.RESULT_OK, intent);
+                        activity.finish();
+                    }
+                });
+
+                builder.setPositiveButton("버튼 편집", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(context, KeyboardCustomActivity.class);
+                        intent.putExtra("custom_id", custom_id);
+                        intent.putExtra("custom_name", custom_name);
+                        intent.putExtra("owner_id", owner_id);
+                        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
         //삭제 버튼 리스너

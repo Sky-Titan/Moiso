@@ -31,6 +31,7 @@ public class KeyboardListActivity extends AppCompatActivity {
     private MyApplication myApplication;
     private KeyboardDB keyboardDB;
 
+    private static KeyboardListActivity activity;
     private static KeyboardListViewModel viewModel;
     private static Context context;
 
@@ -47,6 +48,7 @@ public class KeyboardListActivity extends AppCompatActivity {
         viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
 
         context = KeyboardListActivity.this;
+        activity = this;
     }
 
     //viewmodel의 item list에 변경 생길 때마다 호출
@@ -61,7 +63,7 @@ public class KeyboardListActivity extends AppCompatActivity {
             recyclerView.addItemDecoration(dividerItemDecoration);
 
             //adapter 적용
-            keyboardAdapter = new KeyboardAdapter(context, viewModel);
+            keyboardAdapter = new KeyboardAdapter(context, viewModel, activity);
             recyclerView.setAdapter(keyboardAdapter);
         }
         else

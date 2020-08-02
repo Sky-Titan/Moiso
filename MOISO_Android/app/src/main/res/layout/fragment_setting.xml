@@ -67,19 +67,5 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/keyboardcustom_btn_setting"
-        android:textColor="@color/white"
-        android:text="키보드 커스텀"
-        android:paddingRight="10dp"
-        android:paddingLeft="20dp"
-        android:layout_marginTop="50dp"
-        android:drawableRight="@drawable/ic_twotone_keyboard_24"
-        android:background="@drawable/ripple_blue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearlayout_setting"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"></Button>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
