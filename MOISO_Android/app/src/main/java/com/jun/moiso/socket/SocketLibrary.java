@@ -20,6 +20,8 @@ public class SocketLibrary {
     private int port ;
     private String ip = "";
 
+    private boolean isFinish = false;
+
     private Socket socket;
 
     private Context context;
@@ -28,23 +30,28 @@ public class SocketLibrary {
 
     }
 
-    public SocketLibrary getInstance()
+    public static SocketLibrary getInstance()
     {
-        if(socketLibrary != null)
+        if(socketLibrary == null)
             socketLibrary = new SocketLibrary();
         return socketLibrary;
     }
 
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
     //키보드 이벤트 송신
-    public boolean sendKeyboardEvent(String key, String motion)
+    public boolean sendKeyboardEvent(int key_code, String motion)
     {
-        final String msg = key+ "/" + motion;
+        //isFinish = false;
+        final String msg = "KEYBOARD="+key_code+ "&" + motion;
         Thread thread = new Thread(new Runnable() {
 
             @Override
             public void run() {
 
-                Log.i(TAG,"Send Keyboard Event");
+                Log.i(TAG,"Send Keyboard Event "+msg);
                 try
                 {
                     outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -58,11 +65,13 @@ public class SocketLibrary {
                     Log.i(TAG, "Send Keyboard Event ["+msg_object.toString()+"]");
 
                     //TODO : 전송 성공 메시지 혹은 실패 메시지
-                    if(msg_object.toString().equals(""))
+                  /*  if(msg_object.toString().equals("KEYBOARD_PROCESS_COMPLETE"))
                         send_result = true;
                     else
                         send_result = false;
-                }
+
+                    isFinish = true;
+               */ }
                 catch (Exception e)
                 {
                     e.printStackTrace();
@@ -71,18 +80,20 @@ public class SocketLibrary {
         });
         thread.start();
 
+
+
         return send_result;
     }
 
     //재연결
-    public boolean reconnect(String ip, int port)
+    public boolean reconnect(String ip, int port, String group_name, String user_name)
     {
         disconnect_result = disconnect();
 
         //연결해제 성공
         if(disconnect_result)
         {
-            connect_result = connect(ip, port);
+            connect_result = connect(ip, port, group_name, user_name);
 
             //연결 성공
             if(connect_result)
@@ -140,8 +151,9 @@ public class SocketLibrary {
     }
 
     //연결
-    public boolean connect(final String ip, final int port)
+    public boolean connect(final String ip, final int port, final String group_name, final String user_name)
     {
+        isFinish = false;
         Thread thread = new Thread(new Runnable() {
 
             @Override
@@ -154,7 +166,7 @@ public class SocketLibrary {
                     socket.setKeepAlive(true);//소켓 연결 알기 위해서
 
                     outputStream = new ObjectOutputStream(socket.getOutputStream());
-                    outputStream.writeObject("START");
+                    outputStream.writeObject("START&"+group_name+"&"+user_name);
                     outputStream.flush();
 
                     inputStream = new ObjectInputStream(socket.getInputStream());
@@ -164,10 +176,12 @@ public class SocketLibrary {
                     Log.i(TAG, "Socket Connect ["+msg_object.toString()+"]");
 
                     //TODO : 연결 성공 메시지 혹은 실패 메시지
-                    if(msg_object.toString().equals(""))
+                    if(msg_object.toString().equals("CONNECT_COMPLETE"))
                         connect_result = true;
                     else
                         connect_result = false;
+
+                    isFinish = true;
                 }
                 catch (Exception e)
                 {
@@ -176,6 +190,9 @@ public class SocketLibrary {
             }
         });
         thread.start();
+
+        //작업 스레드 종료시까지 대기기
+        while(!isFinish);
 
         return connect_result;
     }

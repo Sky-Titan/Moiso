@@ -14,8 +14,15 @@ public class GroupViewModel extends ViewModel {
     private boolean isRemove = false;//아이템 삭제 여부
     private boolean isAdd = false;//아이템 추가 여부
     private boolean isUpdate = false;//아이템 업데이트 여부
+    private String user_name = "test"; //TODO : 나중에 바꿔야함
 
+    public String getUser_name() {
+        return user_name;
+    }
 
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
 
     public int getRemove_position() {
         return remove_position;

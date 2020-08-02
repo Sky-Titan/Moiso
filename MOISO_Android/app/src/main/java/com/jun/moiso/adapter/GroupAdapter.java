@@ -2,6 +2,7 @@ package com.jun.moiso.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.INotificationSideChannel;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -17,6 +19,7 @@ import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.jun.moiso.MyApplication;
 import com.jun.moiso.R;
 import com.jun.moiso.activity.GroupActivity;
 import com.jun.moiso.databinding.GrouplistItemBinding;
@@ -52,8 +55,18 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     public void onBindViewHolder(@NonNull final GroupViewHolder<GrouplistItemBinding> holder, int position) {
         Log.i(TAG, "onBindViewHolder");
 
-        holder.binding().setItem(groupListItems.get(position));
+        final TextView group_name_textview = (TextView) holder.itemView.findViewById(R.id.groupname_item);
 
+        holder.binding().setItem(groupListItems.get(position));
+        holder.binding().getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, GroupActivity.class);
+                intent.putExtra("group_name", group_name_textview.getText().toString());
+                intent.putExtra("user_name", groupViewModel.getUser_name());
+                context.startActivity(intent);
+            }
+        });
         //그룹 삭제 버튼 리스너
         ImageButton delete = (ImageButton) holder.itemView.findViewById(R.id.groupdelete_btn_item);
         delete.setOnClickListener(new View.OnClickListener() {
@@ -173,15 +186,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         public GroupViewHolder(final View v){
             super(v);
             this.binding = (T) DataBindingUtil.bind(v);
-            binding.getRoot().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO : item 포지션에 따른 내용 삽입 수정
-                    Intent intent = new Intent(context, GroupActivity.class);
-                    context.startActivity(intent);
-
-                }
-            });
 
         }
 

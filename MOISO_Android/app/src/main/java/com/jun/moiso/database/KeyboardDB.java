@@ -3,15 +3,11 @@ package com.jun.moiso.database;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Button;
 
 import androidx.databinding.ObservableArrayList;
 
 import com.jun.moiso.model.CustomButton;
 import com.jun.moiso.model.CustomKeyboard;
-
-import java.util.ArrayList;
-import java.util.Observable;
 
 public class KeyboardDB {
 
@@ -33,7 +29,7 @@ public class KeyboardDB {
         db = myDBHelper.getWritableDatabase();
 
         db.execSQL("CREATE TABLE IF NOT EXISTS Custom (custom_id INTEGER PRIMARY KEY AUTOINCREMENT, custom_name TEXT, owner_id TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS Button (button_id INTEGER PRIMARY KEY AUTOINCREMENT, button_key TEXT," +
+        db.execSQL("CREATE TABLE IF NOT EXISTS Button (button_id INTEGER PRIMARY KEY AUTOINCREMENT, button_key INTEGER, button_text TEXT  ," +
                 " pos_x FLOAT, pos_y FLOAT, custom_id INTEGER, FOREIGN KEY (custom_id) REFERENCES Custom(custom_id) )");
     }
 
@@ -45,9 +41,9 @@ public class KeyboardDB {
     }
 
     //버튼 생성
-    public CustomButton insertButton(String button_key, float pos_x, float pos_y, int custom_id)
+    public CustomButton insertButton(int button_key, String button_text ,float pos_x, float pos_y, int custom_id)
     {
-        db.execSQL("INSERT INTO Button (button_key, pos_x, pos_y, custom_id) VALUES('"+button_key+"', "+pos_x+", "+pos_y+", "+custom_id+")");
+        db.execSQL("INSERT INTO Button (button_key, button_text, pos_x, pos_y, custom_id) VALUES("+button_key+", '"+button_text+"' ,"+pos_x+", "+pos_y+", "+custom_id+")");
         return selectRecentButton();
 
     }
@@ -95,10 +91,11 @@ public class KeyboardDB {
         while(cursor.moveToNext())
         {
             customButton.setButton_id(cursor.getInt(0));
-            customButton.setKey(cursor.getString(1));
-            customButton.setPos_x(cursor.getFloat(2));
-            customButton.setPos_y(cursor.getFloat(3));
-            customButton.setCustom_id(cursor.getInt(4));
+            customButton.setButton_key(cursor.getInt(1));
+            customButton.setButton_text(cursor.getString(2));
+            customButton.setPos_x(cursor.getFloat(3));
+            customButton.setPos_y(cursor.getFloat(4));
+            customButton.setCustom_id(cursor.getInt(5));
         }
         cursor.close();
         return customButton;
@@ -132,11 +129,12 @@ public class KeyboardDB {
         while(cursor.moveToNext())
         {
             int button_id = cursor.getInt(0);
-            String button_key = cursor.getString(1);
-            float pos_x = cursor.getFloat(2);
-            float pos_y = cursor.getFloat(3);
+            int button_key = cursor.getInt(1);
+            String button_text = cursor.getString(2);
+            float pos_x = cursor.getFloat(3);
+            float pos_y = cursor.getFloat(4);
 
-            CustomButton button = new CustomButton(button_id, button_key, pos_x, pos_y, custom_id);
+            CustomButton button = new CustomButton(button_id, button_key, button_text,pos_x, pos_y, custom_id);
             buttons.add(button);
         }
         cursor.close();

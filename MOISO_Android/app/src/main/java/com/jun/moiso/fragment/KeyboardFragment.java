@@ -12,19 +12,24 @@ import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jun.moiso.MyApplication;
 import com.jun.moiso.R;
 import com.jun.moiso.activity.ControlActivity;
 import com.jun.moiso.activity.KeyboardListActivity;
 import com.jun.moiso.database.KeyboardDB;
 import com.jun.moiso.model.CustomButton;
 import com.jun.moiso.model.CustomKeyboard;
+import com.jun.moiso.model.KeyButton;
+import com.jun.moiso.socket.SocketLibrary;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class KeyboardFragment extends Fragment {
 
@@ -41,6 +46,11 @@ public class KeyboardFragment extends Fragment {
     private FloatingActionButton callCustom_btn;
     public float call_custom_move_limit;
     private ArrayList<Button> buttonArrayList = new ArrayList<>();
+
+    private SocketLibrary socketLibrary;
+
+    private ArrayList<String> list = new ArrayList<>();
+    private ArrayList<KeyButton> keyButtons = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +80,13 @@ public class KeyboardFragment extends Fragment {
         setDragAndDrop((ViewGroup) v);
 
         calculateCustomMoveLimit();
+
+        MyApplication myApplication = (MyApplication)getActivity().getApplication();
+        list.addAll(myApplication.getList());
+        keyButtons.addAll(myApplication.getKeyButtons());
+
+        socketLibrary = SocketLibrary.getInstance();
+
         return v;
     }
 
@@ -112,22 +129,82 @@ public class KeyboardFragment extends Fragment {
 
         for(int i=0;i<customButtons.size();i++)
         {
-            CustomButton customButton = customButtons.get(i);
+            final CustomButton customButton = customButtons.get(i);
 
             Button btn = new Button(getContext());
             btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             btn.setPadding(5,5,5,5);
             btn.setBackground(getActivity().getDrawable(R.drawable.mouse_center_btn_layout));
-            btn.setTag(customButton.getButton_id());
-            btn.setText(customButton.getKey());
+            btn.setTag(customButton.getButton_id()+"&"+customButton.getButton_key());
+            btn.setText(customButton.getButton_text());
             btn.setX(customButton.getPos_x());
             btn.setY(customButton.getPos_y());
+
+            btn.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                    Button btn = (Button)view;
+
+                    int key_code = parseKeyCode(btn.getTag().toString());
+                    String motion = "";
+
+                    switch (motionEvent.getAction())
+                    {
+                        case MotionEvent.ACTION_UP :
+                            motion = "RELEASE";
+                            btn.setPressed(false);
+                            //송신 결과 리턴
+                            socketLibrary.sendKeyboardEvent(key_code, motion);
+                            Log.i(TAG,"Keyboard "+key_code+" "+motion+" Send Complete");
+                            break;
+
+                            case MotionEvent.ACTION_DOWN :
+                                motion = "PRESS";
+                                btn.setPressed(true);
+                                //송신 결과 리턴
+                                socketLibrary.sendKeyboardEvent(key_code, motion);
+                                Log.i(TAG,"Keyboard "+key_code+" "+motion+" Send Complete");
+                                break;
+                    }
+
+
+
+                    return true;
+                }
+            });
+
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
 
             buttonArrayList.add(btn);
 
             //부모 레이아웃에 추가
             parent_layout.addView(btn);
         }
+    }
+
+    private int parseKeyCode(String tag)
+    {
+        StringTokenizer strtok = new StringTokenizer(tag,"&");
+        strtok.nextToken();
+        return Integer.parseInt(strtok.nextToken());
+    }
+
+
+    //키코드 찾아오기
+    private int findKeyCode(String button_text)
+    {
+        for(int i=0;i<keyButtons.size();i++)
+        {
+            if(keyButtons.get(i).getKey_name().equals(button_text))
+                return keyButtons.get(i).getKey_code();
+        }
+        return -1;
     }
 
     //activity 드래그앤드롭 설정

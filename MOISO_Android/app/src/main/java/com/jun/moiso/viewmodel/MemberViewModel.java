@@ -15,6 +15,23 @@ public class MemberViewModel extends ViewModel {
     private boolean isUpdate = false;//아이템 업데이트 여부
 
 
+    private String user_name, grop_name;
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public String getGrop_name() {
+        return grop_name;
+    }
+
+    public void setGrop_name(String grop_name) {
+        this.grop_name = grop_name;
+    }
 
     public int getRemove_position() {
         return remove_position;

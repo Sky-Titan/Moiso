@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -21,14 +20,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jun.moiso.MyApplication;
 import com.jun.moiso.R;
 import com.jun.moiso.database.KeyboardDB;
 import com.jun.moiso.databinding.ActivityKeyboardCustomBinding;
 import com.jun.moiso.model.CustomButton;
 import com.jun.moiso.model.CustomKeyboard;
+import com.jun.moiso.model.KeyButton;
 import com.jun.moiso.viewmodel.KeyboardCustomViewModel;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class KeyboardCustomActivity extends AppCompatActivity {
 
@@ -42,7 +44,10 @@ public class KeyboardCustomActivity extends AppCompatActivity {
     private KeyboardDB keyboardDB;
 
     private AutoCompleteTextView autoCompleteTextView;
+
     private ArrayList<String> list = new ArrayList<>();
+    private ArrayList<KeyButton> keyButtons = new ArrayList<>();
+
     private ArrayList<Button> buttonArrayList = new ArrayList<>();
 
     private FloatingActionButton delete_btn;
@@ -78,7 +83,12 @@ public class KeyboardCustomActivity extends AppCompatActivity {
         setChildViewDragListener(delete_btn);
 
         //autocompletelist의 drop down 버튼 list 세팅
-        settingList();
+
+        MyApplication myApplication = (MyApplication) getApplication();
+        list.addAll(myApplication.getList());
+        keyButtons.addAll(myApplication.getKeyButtons());
+
+        //settingList();
 
 
         //드래그앤 드롭
@@ -102,7 +112,7 @@ public class KeyboardCustomActivity extends AppCompatActivity {
             btn.setPadding(5,5,5,5);
             btn.setBackground(getDrawable(R.drawable.mouse_center_btn_layout));
             btn.setTag(customButton.getButton_id());
-            btn.setText(customButton.getKey());
+            btn.setText(customButton.getButton_text());
             btn.setX(customButton.getPos_x());
             btn.setY(customButton.getPos_y());
 
@@ -120,33 +130,51 @@ public class KeyboardCustomActivity extends AppCompatActivity {
         delete_animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha_remove_for_del_btn);
     }
 
-    private void setAutoCompleteTextView(final ViewGroup parent_layout)
-    {
+    private void setAutoCompleteTextView(final ViewGroup parent_layout) {
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.key_find_autocomplete_keyboardcustom);
-        autoCompleteTextView.setAdapter(new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,list));
+        autoCompleteTextView.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, list));
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String button_key = ((TextView)view).getText().toString();
+                String button_text = ((TextView) view).getText().toString();
 
-                CustomButton customButton = keyboardDB.insertButton(button_key, 0, autoCompleteTextView.getY()+autoCompleteTextView.getHeight() * 2, customKeyboard.getCustom_id());
-                //화면에 버튼 추가
-                Button btn = new Button(getApplicationContext());
-                btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                btn.setPadding(5,5,5,5);
-                btn.setBackground(getDrawable(R.drawable.mouse_center_btn_layout));
-                btn.setTag(customButton.getButton_id());
-                btn.setText(customButton.getKey());
-                btn.setX(customButton.getPos_x());
-                btn.setY(customButton.getPos_y());
+                int button_key = findKeyCode(button_text);
 
-                setChildViewDragListener(btn);
-                buttonArrayList.add(btn);
-
-                //부모 레이아웃에 추가
-               parent_layout.addView(btn);
+                if(button_key != -1)
+                    addButton(parent_layout, button_key, button_text);
             }
         });
+    }
+
+    private void addButton(ViewGroup parent_layout, int button_key, String button_text)
+    {
+        CustomButton customButton = keyboardDB.insertButton(button_key, button_text, 0, autoCompleteTextView.getY()+autoCompleteTextView.getHeight() * 2, customKeyboard.getCustom_id());
+        //화면에 버튼 추가
+        Button btn = new Button(getApplicationContext());
+        btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        btn.setPadding(5,5,5,5);
+        btn.setBackground(getDrawable(R.drawable.mouse_center_btn_layout));
+        btn.setTag(customButton.getButton_id()+"&"+button_key);
+        btn.setText(button_text);
+        btn.setX(customButton.getPos_x());
+        btn.setY(customButton.getPos_y());
+
+        setChildViewDragListener(btn);
+        buttonArrayList.add(btn);
+
+        //부모 레이아웃에 추가
+        parent_layout.addView(btn);
+    }
+
+    //키코드 찾아오기
+    private int findKeyCode(String button_text)
+    {
+        for(int i=0;i<keyButtons.size();i++)
+        {
+            if(keyButtons.get(i).getKey_name().equals(button_text))
+                return keyButtons.get(i).getKey_code();
+        }
+        return -1;
     }
 
     //드래그할 자식뷰의 리스너 설정
@@ -218,13 +246,21 @@ public class KeyboardCustomActivity extends AppCompatActivity {
         dragView.setY(dy - dragView.getHeight() / 2);
 
         if(dragView.getClass() == Button.class)
-            keyboardDB.updateButtonPos((int)dragView.getTag(), dragView.getX(), dragView.getY());
+        {
+            StringTokenizer stringTokenizer = new StringTokenizer(dragView.getTag().toString(),"&");
+
+            int button_id = Integer.parseInt(stringTokenizer.nextToken());
+
+            keyboardDB.updateButtonPos(button_id, dragView.getX(), dragView.getY());
+        }
     }
 
     //버튼 삭제 처리
     private void deleteButton(ViewGroup parentView)
     {
-        keyboardDB.deleteButton((int)dragView.getTag());
+        StringTokenizer strtok = new StringTokenizer(dragView.getTag().toString(),"&");
+
+        keyboardDB.deleteButton(Integer.parseInt(strtok.nextToken()));
         buttonArrayList.remove(dragView);
 
         delete_btn.setPressed(true);
@@ -245,69 +281,6 @@ public class KeyboardCustomActivity extends AppCompatActivity {
         return false;
     }
 
-    private void settingList()
-    {
-        list.add("ESC");
-
-        //F1 ~ F12
-        for(int i = 1; i<=12;i++)
-            list.add("F"+i);
-
-        //숫자 1~9
-        for(int i = 0; i<=9;i++)
-            list.add("NUMBER"+i);
-
-        list.add("Print Screen");
-        list.add("Scroll Lock");
-        list.add("Pause Break");
-
-        list.add("Insert");
-        list.add("Home");
-        list.add("Page Up");
-        list.add("Page Down");
-        list.add("Delete");
-        list.add("End");
-
-        list.add("NumLock");
-        list.add("/");
-        list.add("*");
-        list.add("-");
-        list.add("+");
-        //숫자패드 1~9
-        for(int i = 0; i<=9;i++)
-            list.add("NUMBER_PAD"+i);
-
-        list.add("Alt");
-        list.add("Ctrl");
-        list.add("Shift");
-        list.add("Enter");
-        list.add("Space");
-        list.add("Back Space");
-        list.add("Tab");
-        list.add("Caps Lock");
-
-        list.add("`");
-        list.add(";");
-        list.add("'");
-        list.add("[");
-        list.add("]");
-        list.add(",");
-        list.add(".");
-        list.add("=");
-        list.add("\\");
-
-        list.add("Window");
-
-        list.add("UP");
-        list.add("DOWN");
-        list.add("LEFT");
-        list.add("RIGHT");
-
-
-        //알파벳
-        for(int i=65;i<=90;i++)
-            list.add(""+(char)i);
-    }
 
 
 

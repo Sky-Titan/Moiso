@@ -26,6 +26,8 @@ public class SplashActivity extends AppCompatActivity {
         doAnimation(mosio_textview,R.anim.alpha_create);
     }
 
+
+
     //상,하단 바 제거
     public void removeActionBar()
     {
