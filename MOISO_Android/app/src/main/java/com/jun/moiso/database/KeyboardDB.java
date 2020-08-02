@@ -82,6 +82,7 @@ public class KeyboardDB {
             customKeyboard.setCustom_name(cursor.getString(1));
             customKeyboard.setOwner_id(cursor.getString(2));
         }
+        cursor.close();
         return customKeyboard;
     }
 
@@ -98,8 +99,8 @@ public class KeyboardDB {
             customButton.setPos_x(cursor.getFloat(2));
             customButton.setPos_y(cursor.getFloat(3));
             customButton.setCustom_id(cursor.getInt(4));
-
         }
+        cursor.close();
         return customButton;
     }
 

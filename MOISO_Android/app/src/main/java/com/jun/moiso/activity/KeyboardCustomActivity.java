@@ -33,6 +33,8 @@ public class KeyboardCustomActivity extends AppCompatActivity {
     private View dragView,drag_btn;//현재 드래그 된 view
     private float dx,dy;
 
+
+
     private ActivityKeyboardCustomBinding binding;
 
     private KeyboardDB keyboardDB;
@@ -47,6 +49,7 @@ public class KeyboardCustomActivity extends AppCompatActivity {
 
     private CustomKeyboard customKeyboard;
     private KeyboardCustomViewModel viewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,7 +214,8 @@ public class KeyboardCustomActivity extends AppCompatActivity {
         dragView.setX(dx - dragView.getWidth() / 2);
         dragView.setY(dy - dragView.getHeight() / 2);
 
-        keyboardDB.updateButtonPos((int)dragView.getTag(), dragView.getX(), dragView.getY());
+        if(dragView.getClass() == Button.class)
+            keyboardDB.updateButtonPos((int)dragView.getTag(), dragView.getX(), dragView.getY());
     }
 
     //버튼 삭제 처리
@@ -220,15 +224,15 @@ public class KeyboardCustomActivity extends AppCompatActivity {
         keyboardDB.deleteButton((int)dragView.getTag());
         buttonArrayList.remove(dragView);
 
-        delete_btn.setEnabled(true);
         delete_btn.setPressed(true);
 
         Animation animation = AnimationUtils.loadAnimation(this,R.anim.scale_up_for_del_btn);
         delete_btn.startAnimation(animation);
         dragView.startAnimation(delete_animation);
+
         parentView.removeView(dragView);
+
         delete_btn.setPressed(false);
-        delete_btn.setEnabled(false);
     }
 
     private boolean isInDelteBtn(float dx, float dy)
