@@ -1,18 +1,22 @@
 package com.jun.moiso.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.jun.moiso.R;
@@ -24,7 +28,7 @@ import com.jun.moiso.viewmodel.GroupViewModel;
 public class GroupManagementFragment extends Fragment {
 
     private static View v;
-    private static GroupViewModel groupViewModel;
+    private static GroupViewModel viewModel;
     private FragmentGroupManagementBinding binding;
     private ImageButton groupadd_btn;
 
@@ -43,10 +47,14 @@ public class GroupManagementFragment extends Fragment {
 
         v = binding.getRoot();
 
-        groupViewModel = new GroupViewModel();
-        //TODO : 추가 테스트 후에 삭제
-        plusOnclick();
+        viewModel = ViewModelProviders.of(this).get(GroupViewModel.class);
+        binding.setViewModel(viewModel);
+
         context = getActivity();
+
+        //그룹 추가 리스너
+        groupAddOnclick();
+
         return v;
     }
 
@@ -64,7 +72,7 @@ public class GroupManagementFragment extends Fragment {
             recyclerView.addItemDecoration(dividerItemDecoration);
 
             //adapter 적용
-            groupAdapter = new GroupAdapter(context, groupViewModel);
+            groupAdapter = new GroupAdapter(context, viewModel);
             recyclerView.setAdapter(groupAdapter);
         }
         else
@@ -73,20 +81,34 @@ public class GroupManagementFragment extends Fragment {
         groupAdapter.setGroupListItems(groupListItems);//item list 적용
     }
 
-    //TODO : 추가 테스트 후에 삭제
-    public void plusOnclick()
+    //그룹 추가 버튼 리스너
+    public void groupAddOnclick()
     {
-        groupViewModel.addItem(new GroupListItem("전세환"));
-        groupViewModel.addItem(new GroupListItem("박준현"));
-        groupViewModel.addItem(new GroupListItem("이준영"));
 
-        binding.setViewModel(groupViewModel);
-
-        groupadd_btn = (ImageButton) v.findViewById(R.id.group_add_btn_groupmanagement);
+        groupadd_btn = (ImageButton)v.findViewById(R.id.group_add_btn_groupmanagement);
         groupadd_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                groupViewModel.addItem(new GroupListItem("test"));
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                View dialog_view = getLayoutInflater().inflate(R.layout.create_dialog,null);
+
+                final EditText editText = (EditText)dialog_view.findViewById(R.id.edittext_dialog);
+
+                builder.setView(dialog_view);
+
+                builder.setTitle("그룹 추가").setMessage("추가할 그룹의 이름을 입력해주세요.");
+                builder.setNegativeButton("취소",null);
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String group_name = editText.getText().toString();
+                        //TODO : 그룹 추가 작업
+                        viewModel.addItem(new GroupListItem(group_name));
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }

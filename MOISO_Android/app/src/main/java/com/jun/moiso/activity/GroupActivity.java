@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,11 +33,9 @@ public class GroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_group);
-        viewModel = new MemberViewModel();
-        binding.setViewModel(viewModel);
+        viewModel = ViewModelProviders.of(this).get(MemberViewModel.class);
 
-        //TODO : 나중에 삭제
-        plusOnclick();
+        binding.setViewModel(viewModel);
 
         context = GroupActivity.this;
     }
@@ -62,21 +61,11 @@ public class GroupActivity extends AppCompatActivity {
         memberAdapter.setMemberListItems(memberListItems);//item list 적용
     }
 
-    //TODO : 추가 테스트 후에 삭제
-    public void plusOnclick()
+    //멤버 추가 리스너
+    public void addMemberOnclick(View v)
     {
-        viewModel.addItem(new MemberListItem("전세환","전세환"));
-        viewModel.addItem(new MemberListItem("박준현", "박준현"));
-        viewModel.addItem(new MemberListItem("이준영", "이준영"));
 
 
-        ImageButton memberadd_btn = (ImageButton) findViewById(R.id.member_add_btn_group);
-        memberadd_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                viewModel.addItem(new MemberListItem("test", "test"));
-            }
-        });
     }
 
     //연결 버튼 클릭 리스너

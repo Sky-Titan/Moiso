@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -62,7 +64,9 @@ public class KeyboardCustomActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         customKeyboard = new CustomKeyboard(intent.getIntExtra("custom_id",0), intent.getStringExtra("custom_name"), intent.getStringExtra("owner_id"));
-        viewModel = new KeyboardCustomViewModel(customKeyboard);
+        viewModel = ViewModelProviders.of(this).get(KeyboardCustomViewModel.class);
+        viewModel.setCustomKeyboard(customKeyboard);
+
         binding.setViewModel(viewModel);
 
         getAnimations();

@@ -1,10 +1,11 @@
 package com.jun.moiso.viewmodel;
 
 import androidx.databinding.ObservableArrayList;
+import androidx.lifecycle.ViewModel;
 
 import com.jun.moiso.model.CustomKeyboard;
 
-public class KeyboardListViewModel {
+public class KeyboardListViewModel extends ViewModel {
 
     private ObservableArrayList<CustomKeyboard> item_list = new ObservableArrayList<>();
     private int remove_position = 0;//삭제된 아이템 위치
@@ -13,9 +14,6 @@ public class KeyboardListViewModel {
     private boolean isAdd = false;//아이템 추가 여부
     private boolean isUpdate = false;//아이템 업데이트 여부
 
-    public KeyboardListViewModel() {
-
-    }
 
     public int getRemove_position() {
         return remove_position;

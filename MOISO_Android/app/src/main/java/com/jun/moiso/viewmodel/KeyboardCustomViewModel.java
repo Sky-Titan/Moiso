@@ -1,19 +1,14 @@
 package com.jun.moiso.viewmodel;
 
+import androidx.lifecycle.ViewModel;
+
 import com.jun.moiso.model.CustomKeyboard;
 
-public class KeyboardCustomViewModel {
+public class KeyboardCustomViewModel extends ViewModel {
 
     private CustomKeyboard customKeyboard;
 
-    public KeyboardCustomViewModel()
-    {
 
-    }
-
-    public KeyboardCustomViewModel(CustomKeyboard customKeyboard) {
-        this.customKeyboard = customKeyboard;
-    }
 
     public CustomKeyboard getCustomKeyboard() {
         return customKeyboard;

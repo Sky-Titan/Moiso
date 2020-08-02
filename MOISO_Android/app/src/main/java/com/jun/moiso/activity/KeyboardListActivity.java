@@ -5,12 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -39,7 +39,8 @@ public class KeyboardListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_keyboard_list);
-        viewModel = new KeyboardListViewModel();
+
+        viewModel = ViewModelProviders.of(this).get(KeyboardListViewModel.class);
         binding.setViewModel(viewModel);
 
         myApplication = (MyApplication)getApplication();
@@ -76,8 +77,8 @@ public class KeyboardListActivity extends AppCompatActivity {
     public void addCustomOnClikc(View v)
     {
         //키보드 커스텀 이름 이력 후 생성하는 액티비티
-        View dialogView = getLayoutInflater().inflate(R.layout.create_keyboardcustom_dialog, null);
-        final EditText editText = (EditText) dialogView.findViewById(R.id.custom_name_edittext_dialog);
+        View dialogView = getLayoutInflater().inflate(R.layout.create_dialog, null);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.edittext_dialog);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView);
