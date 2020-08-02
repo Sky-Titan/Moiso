@@ -13,7 +13,7 @@
         app:tabBackground="@color/blue"
         app:tabIndicatorColor="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp">
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/mouse_tab_control"
@@ -39,12 +39,12 @@
         android:background="@drawable/ripple_lime_green"
         android:drawableRight="@drawable/ic_twotone_touch_app_24"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="45dp"/>
     <FrameLayout
         android:layout_width="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/control_authority_btn_control"
-        android:layout_height="0dp">
+        android:layout_height="match_parent">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewpager_control"

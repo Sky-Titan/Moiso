@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.ObservableArrayList;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jun.moiso.R;
+import com.jun.moiso.activity.ControlActivity;
 import com.jun.moiso.activity.KeyboardListActivity;
 import com.jun.moiso.database.KeyboardDB;
 import com.jun.moiso.model.CustomButton;
@@ -37,7 +39,7 @@ public class KeyboardFragment extends Fragment {
     private CustomKeyboard customKeyboard;
 
     private FloatingActionButton callCustom_btn;
-
+    public float call_custom_move_limit;
     private ArrayList<Button> buttonArrayList = new ArrayList<>();
 
     @Override
@@ -67,7 +69,14 @@ public class KeyboardFragment extends Fragment {
 
         setDragAndDrop((ViewGroup) v);
 
+        calculateCustomMoveLimit();
         return v;
+    }
+
+    //call custom버튼이 이동할 수 있는 한계 계산
+    private void calculateCustomMoveLimit()
+    {
+        call_custom_move_limit = ((ControlActivity)getActivity()).controlAuthority_btn.getHeight() + ((ControlActivity)getActivity()).tabLayout.getHeight();
     }
 
     @Override
@@ -133,10 +142,16 @@ public class KeyboardFragment extends Fragment {
                         case DragEvent.ACTION_DRAG_LOCATION:
                             dx = dragEvent.getX();
                             dy = dragEvent.getY();
+
+                            Log.d(TAG,call_custom_move_limit+"");
+
+                            if(dy <= call_custom_move_limit)
+                                dragView.cancelDragAndDrop();
                             break;
 
                         case DragEvent.ACTION_DRAG_ENDED:
-                            moveButton();
+                            if(dy > call_custom_move_limit)
+                                moveButton();
                             break;
                     }
 

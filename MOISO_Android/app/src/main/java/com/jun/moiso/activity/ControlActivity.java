@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -24,7 +25,10 @@ public class ControlActivity extends AppCompatActivity {
     private MouseFragment mouseFragment;
     private KeyboardFragment keyboardFragment;
 
-    private TabLayout tabLayout;
+    public TabLayout tabLayout;
+    public Button controlAuthority_btn;
+
+    public float call_custom_move_limit;
 
     private static final String TAG = "ControlActivity";
 
@@ -34,12 +38,15 @@ public class ControlActivity extends AppCompatActivity {
         View view = getLayoutInflater().from(this).inflate(R.layout.activity_control,null);
         setContentView(view);
 
+        controlAuthority_btn = (Button) findViewById(R.id.control_authority_btn_control);
+
 
         createFragment();
         createViewpager();
         settingTabLayout();
-
     }
+
+
 
     //fragment 생성
     public void createFragment()
