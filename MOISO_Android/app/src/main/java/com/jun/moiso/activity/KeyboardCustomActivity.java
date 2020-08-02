@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 public class KeyboardCustomActivity extends AppCompatActivity {
 
-    private View dragView,drag_btn;//현재 드래그 된 view
+    private View dragView;//현재 드래그 된 view
     private float dx,dy;
 
 
@@ -44,7 +44,7 @@ public class KeyboardCustomActivity extends AppCompatActivity {
     private ArrayList<Button> buttonArrayList = new ArrayList<>();
 
     private FloatingActionButton delete_btn;
-    private Animation create_animation, delete_animation;
+    private Animation delete_animation;
     private View parent_view;
 
     private CustomKeyboard customKeyboard;
@@ -113,7 +113,6 @@ public class KeyboardCustomActivity extends AppCompatActivity {
 
     private void getAnimations()
     {
-        create_animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha_create_for_del_btn);
         delete_animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha_remove_for_del_btn);
     }
 
