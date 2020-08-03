@@ -99,11 +99,11 @@ public class Setting extends JFrame {
         group_name2.setBounds(80, 260, 150, 30);
         add(group_name2);
 
-        people = new JLabel("연결된 멤버 : ");
+        people = new JLabel("연결 멤버 수 : ");
         people.setBounds(80,300,150,30);
         add(people);
 
-        people2 = new JLabel("");
+        people2 = new JLabel("0");
         people2.setBounds(80,320,150,30);
         add(people2);
 

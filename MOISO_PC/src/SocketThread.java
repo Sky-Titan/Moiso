@@ -100,7 +100,7 @@ public class SocketThread extends Thread {
             //화면에 그룹 이름 적용
             setting.group_name2.setText(group_name);
             //화면에 연결 사용자 추가
-            setting.people2.setText(setting.people2.getText()+" "+user_name);
+            setting.people2.setText(Integer.parseInt(setting.people2.getText())+1+"");
 
             //연결 시작
             if(key.equals("START"))
@@ -167,6 +167,7 @@ public class SocketThread extends Thread {
             sendResponse("CONNECT_FINISH");
             sock.close();
             sock = null;
+            setting.people2.setText(Integer.parseInt(setting.people2.getText())-1+"");
             callback.removeCallback(this);
         }
         catch (Exception e)
