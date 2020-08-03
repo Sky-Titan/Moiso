@@ -174,7 +174,7 @@ public class SocketThread extends Thread {
             e.printStackTrace();
         }
     }
-    
+
     //응답 송신
     private void sendResponse(String msg) throws Exception
     {
