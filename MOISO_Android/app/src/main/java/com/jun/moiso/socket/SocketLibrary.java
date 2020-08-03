@@ -1,11 +1,15 @@
 package com.jun.moiso.socket;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Timer;
 
 public class SocketLibrary {
 
@@ -23,7 +27,7 @@ public class SocketLibrary {
     private boolean isFinish = false;
 
     private Socket socket;
-
+    private Activity current_activity;
     private Context context;
 
     private SocketLibrary(){
@@ -101,14 +105,14 @@ public class SocketLibrary {
     }
 
     //재연결
-    public boolean reconnect(String ip, int port, String group_name, String user_name)
+    public boolean reconnect(String ip, int port, String group_name, String user_name, Activity activity)
     {
         disconnect_result = disconnect();
 
         //연결해제 성공
         if(disconnect_result)
         {
-            connect_result = connect(ip, port, group_name, user_name);
+            connect_result = connect(ip, port, group_name, user_name, activity);
 
             //연결 성공
             if(connect_result)
@@ -166,9 +170,12 @@ public class SocketLibrary {
     }
 
     //연결
-    public boolean connect(final String ip, final int port, final String group_name, final String user_name)
+    public boolean connect(final String ip, final int port, final String group_name, final String user_name, final Activity activity)
     {
         isFinish = false;
+        connect_result = false;
+        current_activity = activity;
+
         Thread thread = new Thread(new Runnable() {
 
             @Override
@@ -179,6 +186,7 @@ public class SocketLibrary {
                 {
                     socket = getSocket(ip, port);//소켓 염
                     socket.setKeepAlive(true);//소켓 연결 알기 위해서
+
 
                     outputStream = new ObjectOutputStream(socket.getOutputStream());
                     outputStream.writeObject("START&"+group_name+"&"+user_name);
@@ -201,14 +209,39 @@ public class SocketLibrary {
                 catch (Exception e)
                 {
                     e.printStackTrace();
+                    isFinish = true;
+                    connect_result = false;
                 }
             }
         });
         thread.start();
 
-        //작업 스레드 종료시까지 대기기
-        while(!isFinish);
+        //작업 스레드 종료시까지 대기
+        int count = 0;
+   /*     while(!isFinish){
+            try
+            {
+                Thread.sleep(1);
+                count++;
+                if(count == 5000)
+                {
+                    isFinish = true;
+                    connect_result = false;
 
+                    if(socket != null)
+                    {
+                        socket.close();
+                        socket = null;
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+*/
         return connect_result;
     }
 
@@ -225,4 +258,6 @@ public class SocketLibrary {
             socket = new Socket();
         return socket;
     }
+
+
 }

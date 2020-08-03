@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 public class SocketThread extends Thread {
 
     private Socket sock;
-    private ServerSocket serverSocket;
+
     private Robot robot;
 
     private Setting setting;
@@ -19,7 +19,6 @@ public class SocketThread extends Thread {
     private String user_name;
 
     private int SOCKET_NUMBER;
-    private int port;
 
     public SocketThread() {
     }
@@ -92,7 +91,9 @@ public class SocketThread extends Thread {
             String group_name = strtok.nextToken();
             user_name = strtok.nextToken();
 
+            //화면에 그룹 이름 적용
             setting.group_name2.setText(group_name);
+            //화면에 연결 사용자 추가
             setting.people2.setText(setting.people2.getText()+" "+user_name);
 
 

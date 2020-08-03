@@ -80,7 +80,7 @@ public class GroupActivity extends AppCompatActivity {
         memberAdapter.setMemberListItems(memberListItems);//item list 적용
     }
 
-    //멤버 추가 리스너
+    //TODO : 멤버 추가 리스너
     public void addMemberOnclick(View v)
     {
 
@@ -90,12 +90,15 @@ public class GroupActivity extends AppCompatActivity {
     //연결 버튼 클릭 리스너
     public void connectClick(View v)
     {
-        //TODO : PC 앱과 소켓 연결 작업 후 ControlActivity로 이동
-
-        if(socketLibrary.connect(ip_edittext.getText().toString(), Integer.parseInt(port_edittext.getText().toString()), group_name, user_name)) {
+        //PC 앱과 소켓 연결 작업 후 ControlActivity로 이동
+        if(socketLibrary.connect(ip_edittext.getText().toString(), Integer.parseInt(port_edittext.getText().toString()), group_name, user_name, this)) {
             Toast.makeText(this, "연결 완료", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, ControlActivity.class);
             startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(this, "연결 실패", Toast.LENGTH_SHORT).show();
         }
     }
 }

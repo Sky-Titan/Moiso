@@ -48,6 +48,7 @@ public class GroupManagementFragment extends Fragment {
         v = binding.getRoot();
 
         viewModel = ViewModelProviders.of(this).get(GroupViewModel.class);
+        viewModel.addItem(new GroupListItem("돌"));//todo : 나중에 지우기
         binding.setViewModel(viewModel);
 
         context = getActivity();
