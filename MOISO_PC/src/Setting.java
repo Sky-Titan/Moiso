@@ -154,6 +154,7 @@ public class Setting extends JFrame {
                 {
                     threads.add(new SocketThread(sock, this, callback));
                     threads.get(threads.size()-1).start();
+                    System.out.println("Current Threads Size : "+threads.size());
                 }
             }
         }
