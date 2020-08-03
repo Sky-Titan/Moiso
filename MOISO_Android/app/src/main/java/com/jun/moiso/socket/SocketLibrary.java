@@ -41,17 +41,36 @@ public class SocketLibrary {
         this.socket = socket;
     }
 
+    //마우스 버튼 이벤트 송신
+    public void sendMouseButtonEvent(String direction, String movement)
+    {
+        final String msg = "MOUSE=BUTTON&"+direction+"/"+movement;
+        sendToSeverMsg(msg);
+    }
+
+    //마우스 드래그 이벤트 송신
+    public void sendMouseDragEvent(int x, int y, int sensetivity)
+    {
+        final String msg = "MOUSE=DRAG&"+x+"/"+y+"*"+sensetivity;
+        sendToSeverMsg(msg);
+    }
+
     //키보드 이벤트 송신
-    public boolean sendKeyboardEvent(int key_code, String motion)
+    public void sendKeyboardEvent(int key_code, String motion)
     {
         //isFinish = false;
         final String msg = "KEYBOARD="+key_code+ "&" + motion;
+        sendToSeverMsg(msg);
+    }
+
+    private void sendToSeverMsg(final String msg)
+    {
         Thread thread = new Thread(new Runnable() {
 
             @Override
             public void run() {
 
-                Log.i(TAG,"Send Keyboard Event "+msg);
+               // Log.i(TAG,"Send Event "+msg);
                 try
                 {
                     outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -62,7 +81,7 @@ public class SocketLibrary {
 
                     //메시지 수신
                     Object msg_object = inputStream.readObject();
-                    Log.i(TAG, "Send Keyboard Event ["+msg_object.toString()+"]");
+                  //  Log.i(TAG, "Send Event ["+msg_object.toString()+"]");
 
                     //TODO : 전송 성공 메시지 혹은 실패 메시지
                   /*  if(msg_object.toString().equals("KEYBOARD_PROCESS_COMPLETE"))
@@ -79,10 +98,6 @@ public class SocketLibrary {
             }
         });
         thread.start();
-
-
-
-        return send_result;
     }
 
     //재연결

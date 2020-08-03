@@ -13,6 +13,8 @@ public class MyApplication extends Application {
     private ArrayList<String> list = new ArrayList<>();
     private ArrayList<KeyButton> keyButtons = new ArrayList<>();
 
+    private int mouse_sensitivity=1;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -41,6 +43,14 @@ public class MyApplication extends Application {
 
     public void setUser_id(String user_id) {
         this.user_id = user_id;
+    }
+
+    public int getMouse_sensitivity() {
+        return mouse_sensitivity;
+    }
+
+    public void setMouse_sensitivity(int mouse_sensitivity) {
+        this.mouse_sensitivity = mouse_sensitivity;
     }
 
     private void settingList()

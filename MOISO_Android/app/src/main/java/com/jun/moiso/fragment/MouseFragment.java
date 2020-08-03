@@ -4,15 +4,30 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
+import com.jun.moiso.MyApplication;
 import com.jun.moiso.R;
 
-public class MouseFragment extends Fragment {
+import com.jun.moiso.socket.SocketLibrary;
 
+public class MouseFragment extends Fragment implements View.OnTouchListener {
 
+    private LinearLayout pad_layout_mouse;
+    private Button left_btn, wheel_btn, right_btn;
+
+    private int first_X,first_Y,current_X,current_Y,value_X=0,value_Y=0;//마우스 커서용
+
+    private static final String TAG = "MouseFragment";
+
+    private SocketLibrary socketLibrary;
+    private MyApplication myApplication;
 
     private View v;
 
@@ -28,6 +43,83 @@ public class MouseFragment extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_mouse, container, false);
 
+        socketLibrary = SocketLibrary.getInstance();
+        myApplication = (MyApplication) getActivity().getApplication();
+
+        pad_layout_mouse = (LinearLayout) v.findViewById(R.id.pad_layout_mouse);
+        pad_layout_mouse.setOnTouchListener(this);
+
+        left_btn = (Button) v.findViewById(R.id.left_button_mouse);
+        wheel_btn = (Button) v.findViewById(R.id.wheel_button_mouse);
+        right_btn = (Button) v.findViewById(R.id.right_button_mouse);
+        left_btn.setOnTouchListener(this);
+        wheel_btn.setOnTouchListener(this);
+        right_btn.setOnTouchListener(this);
+
         return v;
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+
+        int eventaction = motionEvent.getAction();
+
+        //드래그
+        if(view == pad_layout_mouse)
+        {
+            //DOWN -> MOVE -> UP
+            switch (eventaction)
+            {
+                case MotionEvent.ACTION_UP://터치 뗄 때
+                    break;
+                case MotionEvent.ACTION_MOVE://터치 드래그할때
+                    current_X = (int)motionEvent.getX();
+                    current_Y = (int)motionEvent.getY();
+                    //Log.d(TAG,"current_x : "+ current_X+" "+"current_y : "+current_Y);
+
+                    value_X = current_X - first_X;
+                    value_Y = current_Y - first_Y;
+
+                    first_X = current_X;
+                    first_Y = current_Y;
+
+                    socketLibrary.sendMouseDragEvent(value_X,value_Y, myApplication.getMouse_sensitivity());
+
+                    break;
+                case MotionEvent.ACTION_DOWN://터치 했을 때 좌표
+                    first_X = (int) motionEvent.getX();//첫 터치한 X 좌표
+                    first_Y = (int) motionEvent.getY();//첫 터치한 Y 좌표
+                   // Log.d(TAG,"first_x : "+ first_X+" "+"first_y : "+first_Y);
+
+                    break;
+            }
+        }
+        else if(view == left_btn || view == wheel_btn || view == right_btn)//마우스 버튼
+        {
+            String direction = "";
+            String movement = "";
+
+            if(view == left_btn)
+                direction = "LEFT";
+            else if(view == wheel_btn)
+                direction = "WHEEL";
+            else if(view == right_btn)
+                direction = "RIGHT";
+
+            if(eventaction == MotionEvent.ACTION_UP)//RELEASE
+            {
+                ((Button)view).setPressed(false);
+                movement = "RELEASE";
+                socketLibrary.sendMouseButtonEvent(direction, movement);
+            }
+            else if(eventaction == MotionEvent.ACTION_DOWN)//PRESS
+            {
+                ((Button)view).setPressed(true);
+                movement = "PRESS";
+                socketLibrary.sendMouseButtonEvent(direction, movement);
+            }
+        }
+
+        return true;
     }
 }
