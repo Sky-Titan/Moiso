@@ -12,23 +12,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.jun.moiso.R;
 import com.jun.moiso.adapter.MemberAdapter;
 import com.jun.moiso.databinding.ActivityGroupBinding;
+import com.jun.moiso.interfaces.SocketCallback;
 import com.jun.moiso.model.MemberListItem;
 import com.jun.moiso.socket.SocketLibrary;
-import com.jun.moiso.viewmodel.MemberViewModel;
+import com.jun.moiso.viewmodel.GroupViewModel;
+
 
 public class GroupActivity extends AppCompatActivity {
 
     private static MemberAdapter memberAdapter;
     ActivityGroupBinding binding;
 
-    private static MemberViewModel viewModel;
+    private static GroupViewModel viewModel;
     private static Context context;
 
     private EditText ip_edittext, port_edittext;
@@ -40,9 +42,11 @@ public class GroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_group);
-        viewModel = ViewModelProviders.of(this).get(MemberViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(GroupViewModel.class);
 
         binding.setViewModel(viewModel);
+
+        socketLibrary = SocketLibrary.getInstance();
 
         Intent intent = getIntent();
         group_name = intent.getStringExtra("group_name");
@@ -50,11 +54,12 @@ public class GroupActivity extends AppCompatActivity {
 
         viewModel.setUser_name(user_name);
         viewModel.setGrop_name(group_name);
+        viewModel.setSocketLibrary(socketLibrary);
 
         ip_edittext = (EditText) findViewById(R.id.ip_edittext_group);
         port_edittext = (EditText) findViewById(R.id.port_edittext_group);
 
-        socketLibrary = SocketLibrary.getInstance();
+
 
         context = GroupActivity.this;
     }
@@ -88,17 +93,37 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     //연결 버튼 클릭 리스너
-    public void connectClick(View v)
+    public void connectClick(final View v)
     {
         //PC 앱과 소켓 연결 작업 후 ControlActivity로 이동
-        if(socketLibrary.connect(ip_edittext.getText().toString(), Integer.parseInt(port_edittext.getText().toString()), group_name, user_name, this)) {
-            Toast.makeText(this, "연결 완료", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, ControlActivity.class);
-            startActivity(intent);
-        }
-        else
-        {
-            Toast.makeText(this, "연결 실패", Toast.LENGTH_SHORT).show();
-        }
+
+        SocketCallback connectCallBack = new SocketCallback() {
+            @Override
+            public void callback(final boolean result) {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(result)
+                        {
+                            Toast.makeText(getApplicationContext(), "연결 완료", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), ControlActivity.class);
+                            startActivity(intent);
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(), "연결 실패", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+            }
+        };
+
+
+        //연결 시작
+        socketLibrary.connect(ip_edittext.getText().toString(), Integer.parseInt(port_edittext.getText().toString()), group_name, user_name, connectCallBack);
     }
+
+
 }

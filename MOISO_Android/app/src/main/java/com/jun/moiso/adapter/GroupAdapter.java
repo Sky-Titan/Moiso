@@ -2,7 +2,6 @@ package com.jun.moiso.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.INotificationSideChannel;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,27 +18,26 @@ import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.jun.moiso.MyApplication;
 import com.jun.moiso.R;
 import com.jun.moiso.activity.GroupActivity;
 import com.jun.moiso.databinding.GrouplistItemBinding;
 import com.jun.moiso.model.GroupListItem;
-import com.jun.moiso.viewmodel.GroupViewModel;
+import com.jun.moiso.viewmodel.GroupManagementViewModel;
 
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHolder<GrouplistItemBinding>> {
 
     private static String TAG = "GroupAdapter";
 
-    private GroupViewModel groupViewModel;
+    private GroupManagementViewModel groupManagementViewModel;
 
     private int lastPosition = 0; //item list의 변경전 크기를 나타낸다.
 
     private ObservableArrayList<GroupListItem> groupListItems = new ObservableArrayList<>() ;
     private Context context;
 
-    public GroupAdapter(Context context, GroupViewModel groupViewModel) {
+    public GroupAdapter(Context context, GroupManagementViewModel groupManagementViewModel) {
         this.context = context;
-        this.groupViewModel = groupViewModel;
+        this.groupManagementViewModel = groupManagementViewModel;
     }
 
     @NonNull
@@ -63,7 +61,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             public void onClick(View view) {
                 Intent intent = new Intent(context, GroupActivity.class);
                 intent.putExtra("group_name", group_name_textview.getText().toString());
-                intent.putExtra("user_name", groupViewModel.getUser_name());
+                intent.putExtra("user_name", groupManagementViewModel.getUser_name());
                 context.startActivity(intent);
             }
         });
@@ -114,7 +112,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             public void onAnimationStart(Animation animation) {
                 //item list에서 제거
                 lockClickable(viewToAnimate, delete_btn);
-                groupViewModel.removeItem(position);
+                groupManagementViewModel.removeItem(position);
                 lastPosition--;
             }
 
@@ -164,15 +162,15 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     public void notifyItemChanged()
     {
         //item이 추가 되었는지, 삭제 되었는지 파악
-        if(groupViewModel.isAdd())
+        if(groupManagementViewModel.isAdd())
         {
-            notifyItemInserted(groupViewModel.getAdd_position());
-            groupViewModel.setAdd(false);
+            notifyItemInserted(groupManagementViewModel.getAdd_position());
+            groupManagementViewModel.setAdd(false);
         }
-        else if(groupViewModel.isRemove())
+        else if(groupManagementViewModel.isRemove())
         {
-            notifyItemRemoved(groupViewModel.getRemove_position());
-            groupViewModel.setRemove(false);
+            notifyItemRemoved(groupManagementViewModel.getRemove_position());
+            groupManagementViewModel.setRemove(false);
         }
         else//todo : 내용 업데이트
         {

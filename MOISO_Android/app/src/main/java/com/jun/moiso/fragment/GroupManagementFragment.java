@@ -23,12 +23,12 @@ import com.jun.moiso.R;
 import com.jun.moiso.adapter.GroupAdapter;
 import com.jun.moiso.databinding.FragmentGroupManagementBinding;
 import com.jun.moiso.model.GroupListItem;
-import com.jun.moiso.viewmodel.GroupViewModel;
+import com.jun.moiso.viewmodel.GroupManagementViewModel;
 
 public class GroupManagementFragment extends Fragment {
 
     private static View v;
-    private static GroupViewModel viewModel;
+    private static GroupManagementViewModel viewModel;
     private FragmentGroupManagementBinding binding;
     private ImageButton groupadd_btn;
 
@@ -47,7 +47,7 @@ public class GroupManagementFragment extends Fragment {
 
         v = binding.getRoot();
 
-        viewModel = ViewModelProviders.of(this).get(GroupViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(GroupManagementViewModel.class);
         viewModel.addItem(new GroupListItem("돌"));//todo : 나중에 지우기
         binding.setViewModel(viewModel);
 

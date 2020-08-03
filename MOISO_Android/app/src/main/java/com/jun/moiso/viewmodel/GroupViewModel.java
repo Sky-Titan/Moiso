@@ -3,25 +3,62 @@ package com.jun.moiso.viewmodel;
 import androidx.databinding.ObservableArrayList;
 import androidx.lifecycle.ViewModel;
 
-import com.jun.moiso.model.GroupListItem;
-
+import com.jun.moiso.model.MemberListItem;
+import com.jun.moiso.socket.SocketLibrary;
 
 public class GroupViewModel extends ViewModel {
 
-    private ObservableArrayList<GroupListItem> item_list = new ObservableArrayList<>();
+    private ObservableArrayList<MemberListItem> item_list = new ObservableArrayList<>();
     private int remove_position = 0;//삭제된 아이템 위치
     private int add_position = 0;//추가된 아이템 위치
     private boolean isRemove = false;//아이템 삭제 여부
     private boolean isAdd = false;//아이템 추가 여부
     private boolean isUpdate = false;//아이템 업데이트 여부
-    private String user_name = "test"; //TODO : 나중에 바꿔야함
+
+    private SocketLibrary socketLibrary;
+
+    private String connect_text = "연결 완료", disconnect_text = "연결";
+
+    private String user_name, grop_name;
+
+    public String getConnect_text() {
+        return connect_text;
+    }
+
+    public void setConnect_text(String connect_text) {
+        this.connect_text = connect_text;
+    }
+
+    public String getDisconnect_text() {
+        return disconnect_text;
+    }
+
+    public void setDisconnect_text(String disconnect_text) {
+        this.disconnect_text = disconnect_text;
+    }
 
     public String getUser_name() {
         return user_name;
     }
 
+    public SocketLibrary getSocketLibrary() {
+        return socketLibrary;
+    }
+
+    public void setSocketLibrary(SocketLibrary socketLibrary) {
+        this.socketLibrary = socketLibrary;
+    }
+
     public void setUser_name(String user_name) {
         this.user_name = user_name;
+    }
+
+    public String getGrop_name() {
+        return grop_name;
+    }
+
+    public void setGrop_name(String grop_name) {
+        this.grop_name = grop_name;
     }
 
     public int getRemove_position() {
@@ -64,24 +101,25 @@ public class GroupViewModel extends ViewModel {
         isUpdate = update;
     }
 
-    public void addItem(GroupListItem groupListItem)
+    public void addItem(MemberListItem memberListItem)
     {
-        item_list.add(groupListItem);
-        add_position = item_list.size()-1;
+        item_list.add(memberListItem);
         isAdd = true;
+        add_position = item_list.size()-1;
     }
 
     public void removeItem(int position)
     {
         item_list.remove(position);
-        remove_position = position;
         isRemove = true;
+        remove_position = position;
     }
-    public ObservableArrayList<GroupListItem> getItem_list() {
+
+    public ObservableArrayList<MemberListItem> getItem_list() {
         return item_list;
     }
 
-    public void setItem_list(ObservableArrayList<GroupListItem> item_list) {
+    public void setItem_list(ObservableArrayList<MemberListItem> item_list) {
         this.item_list = item_list;
     }
 }

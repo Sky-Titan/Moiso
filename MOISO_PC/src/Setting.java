@@ -1,16 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.*;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URL;
+import java.util.ArrayList;
 
 public class Setting extends JFrame {
 
@@ -26,7 +24,7 @@ public class Setting extends JFrame {
     public Robot robot;
 
     private static final int MAX_THREAD = 20;
-    private Thread[] threads;
+    private ArrayList<SocketThread> threads;
 
     //연결 스레드 정해줌
     public int connect_thread = 0;
@@ -44,18 +42,12 @@ public class Setting extends JFrame {
             public void windowClosing(WindowEvent e) {
                 // TODO Auto-generated method stub
 
-           /*     try
+                for(int i=0;i<threads.size();i++)
                 {
-                    	ObjectOutputStream outputStream = new ObjectOutputStream(sock.getOutputStream());
-                    		outputStream.writeObject("연결 종료");
-                    		outputStream.flush();
-                    	sock.close();
+                    threads.get(i).disconnect();
                 }
-                catch (Exception exception) {
-                    // TODO: handle exception
-                    exception.printStackTrace();
-                }
-             */   super.windowClosing(e);
+
+                super.windowClosing(e);
                 System.exit(0);
             }
         });
@@ -124,7 +116,7 @@ public class Setting extends JFrame {
         add(receive_info2);
 
 
-        threads = new Thread[MAX_THREAD];
+        threads = new ArrayList<>();
 
         setVisible(true);
         waitConnect();
@@ -132,6 +124,7 @@ public class Setting extends JFrame {
 
     }
 
+    //연결 대기
     public void waitConnect()
     {
         try
@@ -142,18 +135,25 @@ public class Setting extends JFrame {
             System.out.println("reading from port....");
             robot = new Robot();
 
+            //연결 요청 기다림
             while(true) {
 
                 Socket sock = serverSocket.accept();
                 InetAddress clientHost = sock.getLocalAddress();
                 int clientPort = sock.getPort();
 
+                Callback callback = new Callback() {
+                    @Override
+                    public void removeCallback(SocketThread thread) {
+                        threads.remove(thread);
+                    }
+                };
+
                 //스레드 최대 개수
-                if(connect_thread < MAX_THREAD)
+                if(threads.size() < MAX_THREAD)
                 {
-                    threads[connect_thread] = new SocketThread(connect_thread, sock, this);
-                    threads[connect_thread].start();
-                    connect_thread++;
+                    threads.add(new SocketThread(sock, this, callback));
+                    threads.get(threads.size()-1).start();
                 }
             }
         }

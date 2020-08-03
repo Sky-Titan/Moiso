@@ -3,19 +3,18 @@ package com.jun.moiso.viewmodel;
 import androidx.databinding.ObservableArrayList;
 import androidx.lifecycle.ViewModel;
 
-import com.jun.moiso.model.MemberListItem;
+import com.jun.moiso.model.GroupListItem;
 
-public class MemberViewModel extends ViewModel {
 
-    private ObservableArrayList<MemberListItem> item_list = new ObservableArrayList<>();
+public class GroupManagementViewModel extends ViewModel {
+
+    private ObservableArrayList<GroupListItem> item_list = new ObservableArrayList<>();
     private int remove_position = 0;//삭제된 아이템 위치
     private int add_position = 0;//추가된 아이템 위치
     private boolean isRemove = false;//아이템 삭제 여부
     private boolean isAdd = false;//아이템 추가 여부
     private boolean isUpdate = false;//아이템 업데이트 여부
-
-
-    private String user_name, grop_name;
+    private String user_name = "test"; //TODO : 나중에 바꿔야함
 
     public String getUser_name() {
         return user_name;
@@ -23,14 +22,6 @@ public class MemberViewModel extends ViewModel {
 
     public void setUser_name(String user_name) {
         this.user_name = user_name;
-    }
-
-    public String getGrop_name() {
-        return grop_name;
-    }
-
-    public void setGrop_name(String grop_name) {
-        this.grop_name = grop_name;
     }
 
     public int getRemove_position() {
@@ -73,25 +64,24 @@ public class MemberViewModel extends ViewModel {
         isUpdate = update;
     }
 
-    public void addItem(MemberListItem memberListItem)
+    public void addItem(GroupListItem groupListItem)
     {
-        item_list.add(memberListItem);
-        isAdd = true;
+        item_list.add(groupListItem);
         add_position = item_list.size()-1;
+        isAdd = true;
     }
 
     public void removeItem(int position)
     {
         item_list.remove(position);
-        isRemove = true;
         remove_position = position;
+        isRemove = true;
     }
-
-    public ObservableArrayList<MemberListItem> getItem_list() {
+    public ObservableArrayList<GroupListItem> getItem_list() {
         return item_list;
     }
 
-    public void setItem_list(ObservableArrayList<MemberListItem> item_list) {
+    public void setItem_list(ObservableArrayList<GroupListItem> item_list) {
         this.item_list = item_list;
     }
 }

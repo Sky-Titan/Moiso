@@ -18,17 +18,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.jun.moiso.R;
 import com.jun.moiso.databinding.MemberlistItemBinding;
 import com.jun.moiso.model.MemberListItem;
-import com.jun.moiso.viewmodel.MemberViewModel;
+import com.jun.moiso.viewmodel.GroupViewModel;
 
 public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberViewHolder<MemberlistItemBinding>> {
 
-    private MemberViewModel memberViewModel;
+    private GroupViewModel groupViewModel;
     private int lastPosition = 0;
     private ObservableArrayList<MemberListItem> memberListItems = new ObservableArrayList<>();
     private Context context;
 
-    public MemberAdapter(Context context, MemberViewModel memberViewModel) {
-        this.memberViewModel = memberViewModel;
+    public MemberAdapter(Context context, GroupViewModel groupViewModel) {
+        this.groupViewModel = groupViewModel;
         this.context = context;
     }
 
@@ -82,7 +82,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
             public void onAnimationStart(Animation animation) {
                 //item list에서 제거
                 lockClickable(viewToAnimate, delete_btn);
-                memberViewModel.removeItem(position);
+                groupViewModel.removeItem(position);
                 lastPosition--;
             }
 
@@ -126,15 +126,15 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
     public void notifyItemChanged()
     {
         //item이 추가 되었는지, 삭제 되었는지 파악
-        if(memberViewModel.isAdd())
+        if(groupViewModel.isAdd())
         {
-            notifyItemInserted(memberViewModel.getAdd_position());
-            memberViewModel.setAdd(false);
+            notifyItemInserted(groupViewModel.getAdd_position());
+            groupViewModel.setAdd(false);
         }
-        else if(memberViewModel.isRemove())
+        else if(groupViewModel.isRemove())
         {
-            notifyItemRemoved(memberViewModel.getRemove_position());
-            memberViewModel.setRemove(false);
+            notifyItemRemoved(groupViewModel.getRemove_position());
+            groupViewModel.setRemove(false);
         }
         else//todo : 내용 업데이트
         {

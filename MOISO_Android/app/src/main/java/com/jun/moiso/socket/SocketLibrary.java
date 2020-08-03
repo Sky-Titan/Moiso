@@ -1,15 +1,15 @@
 package com.jun.moiso.socket;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.CountDownTimer;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.jun.moiso.interfaces.SocketCallback;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.Timer;
+import java.net.SocketAddress;
 
 public class SocketLibrary {
 
@@ -24,11 +24,12 @@ public class SocketLibrary {
     private int port ;
     private String ip = "";
 
-    private boolean isFinish = false;
 
     private Socket socket;
-    private Activity current_activity;
+
     private Context context;
+
+    private final int TIME_OUT = 3000;
 
     private SocketLibrary(){
 
@@ -67,6 +68,7 @@ public class SocketLibrary {
         sendToSeverMsg(msg);
     }
 
+    //서버로 메시지 송신
     private void sendToSeverMsg(final String msg)
     {
         Thread thread = new Thread(new Runnable() {
@@ -81,20 +83,7 @@ public class SocketLibrary {
                     outputStream.writeObject(msg);
                     outputStream.flush();
 
-                    inputStream = new ObjectInputStream(socket.getInputStream());
-
-                    //메시지 수신
-                    Object msg_object = inputStream.readObject();
-                  //  Log.i(TAG, "Send Event ["+msg_object.toString()+"]");
-
-                    //TODO : 전송 성공 메시지 혹은 실패 메시지
-                  /*  if(msg_object.toString().equals("KEYBOARD_PROCESS_COMPLETE"))
-                        send_result = true;
-                    else
-                        send_result = false;
-
-                    isFinish = true;
-               */ }
+                }
                 catch (Exception e)
                 {
                     e.printStackTrace();
@@ -105,32 +94,16 @@ public class SocketLibrary {
     }
 
     //재연결
-    public boolean reconnect(String ip, int port, String group_name, String user_name, Activity activity)
+    public void reconnect(String ip, int port, String group_name, String user_name, SocketCallback reconnectCallback)
     {
-        disconnect_result = disconnect();
+        //TODO : 재연결 (연결해제 -> 연결)
 
-        //연결해제 성공
-        if(disconnect_result)
-        {
-            connect_result = connect(ip, port, group_name, user_name, activity);
-
-            //연결 성공
-            if(connect_result)
-                reconnect_result = true;
-            else//연결 실패
-                reconnect_result = false;
-        }
-        else// 연결 해제 실패
-        {
-            reconnect_result = false;
-        }
-
-        return reconnect_result;
     }
 
     //연결해제
-    public boolean disconnect()
+    public void disconnect(final SocketCallback disconnectCallBack)
     {
+        disconnect_result = false;
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -150,31 +123,35 @@ public class SocketLibrary {
                     //서버 메시지 수신
                     Log.i(TAG, "Socket Disconnect ["+object.toString()+"]");
 
-                    if (!socket.isClosed() && socket != null && object.toString().equals("OK"))
-                        socket.close();
+                    socket.close();
+                    socket = null;
 
-                    if(socket.isClosed())
+                    if(socket == null || socket.isClosed())
                         disconnect_result = true;
                     else
                         disconnect_result = false;
+
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
+                    socket = null;
+                    disconnect_result = false;
                 }
 
+                disconnectCallBack.callback(disconnect_result);
             }
         });
         thread.start();
-        return disconnect_result;
+
     }
 
     //연결
-    public boolean connect(final String ip, final int port, final String group_name, final String user_name, final Activity activity)
+    public void connect(final String ip, final int port, final String group_name, final String user_name, final SocketCallback connectCallBack)
     {
-        isFinish = false;
         connect_result = false;
-        current_activity = activity;
+
+        final SocketAddress socketAddress = new InetSocketAddress(ip,port);
 
         Thread thread = new Thread(new Runnable() {
 
@@ -184,9 +161,10 @@ public class SocketLibrary {
                 Log.i(TAG,"Socket Connect try");
                 try
                 {
-                    socket = getSocket(ip, port);//소켓 염
-                    socket.setKeepAlive(true);//소켓 연결 알기 위해서
+                    socket = getSocket();//소켓 염
 
+                    socket.connect(socketAddress, TIME_OUT);
+                    socket.setKeepAlive(true);//소켓 연결 알기 위해서
 
                     outputStream = new ObjectOutputStream(socket.getOutputStream());
                     outputStream.writeObject("START&"+group_name+"&"+user_name);
@@ -204,58 +182,77 @@ public class SocketLibrary {
                     else
                         connect_result = false;
 
-                    isFinish = true;
+
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
-                    isFinish = true;
+                    socket = null;
                     connect_result = false;
+
                 }
+                connectCallBack.callback(connect_result);
             }
         });
         thread.start();
 
-        //작업 스레드 종료시까지 대기
-        int count = 0;
-   /*     while(!isFinish){
-            try
-            {
-                Thread.sleep(1);
-                count++;
-                if(count == 5000)
+
+    }
+
+    //서버 측에서 먼저 socket 연결을 종료할 시 -> 메시지를 받아서 소켓 연결 및 ControlActivity 종료
+    public void waitSocketClose(final SocketCallback socketCallback)
+    {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean isFinish = false;
+                try
                 {
-                    isFinish = true;
-                    connect_result = false;
-
-                    if(socket != null)
+                    while (!isFinish)
                     {
-                        socket.close();
-                        socket = null;
-                    }
+                        inputStream = new ObjectInputStream(socket.getInputStream());
 
+                        //메시지 수신
+                        Object msg_object = inputStream.readObject();
+                        if(msg_object.toString().equals("CONNECT_FINISH"))
+                        {
+                            socket.close();
+                            socket = null;
+                            isFinish = true;
+                        }
+                    }
                 }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    socket = null;
+                }
+                socketCallback.callback(isFinish);
             }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-*/
-        return connect_result;
+        });
+        thread.start();
     }
 
     private Socket getSocket(String ip, int port) throws  Exception
     {
-        if(socket == null)
+        if(socket == null || socket.isClosed())
             socket = new Socket(ip, port);
+
         return socket;
     }
 
-    private Socket getSocket() throws  Exception
+    public Socket getSocket()
     {
-        if(socket == null)
-            socket = new Socket();
+        try
+        {
+            if(socket == null || socket.isClosed())
+                socket = new Socket();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
         return socket;
     }
 

@@ -3,7 +3,10 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 
@@ -18,29 +21,32 @@ public class SocketThread extends Thread {
     //연결된 사용자 이름
     private String user_name;
 
-    private int SOCKET_NUMBER;
+    private Callback callback;
+
+
+    private ObjectOutputStream outputStream;
+    private ObjectInputStream inputStream;
+
 
     public SocketThread() {
     }
 
-    public SocketThread(int SOCKET_NUMBER) {
-        this.SOCKET_NUMBER = SOCKET_NUMBER;
-    }
 
-    public SocketThread(int SOCKET_NUMBER, Socket sock) {
-        this.SOCKET_NUMBER = SOCKET_NUMBER;
+
+    public SocketThread(Socket sock) {
+
         this.sock = sock;
     }
 
-    public SocketThread(int SOCKET_NUMBER, Setting setting) {
-        this.SOCKET_NUMBER = SOCKET_NUMBER;
-        this.setting = setting;
+    public SocketThread(Setting setting) {
+       this.setting = setting;
     }
 
-    public SocketThread(int SOCKET_NUMBER, Socket sock, Setting setting) {
-        this.SOCKET_NUMBER = SOCKET_NUMBER;
+    public SocketThread(Socket sock, Setting setting, Callback callback) {
+
         this.sock = sock;
         this.setting = setting;
+        this.callback = callback;
     }
 
     @Override
@@ -64,8 +70,6 @@ public class SocketThread extends Thread {
     {
         try
         {
-
-            ObjectInputStream inputStream;
             java.lang.Object obj = null;
 
             try
@@ -83,7 +87,7 @@ public class SocketThread extends Thread {
 
             //수신 메시지 String 변환
             String receive = String.valueOf(obj);
-            System.out.println("Thread ["+SOCKET_NUMBER+"] receive : "+receive);
+
 
             StringTokenizer strtok = new StringTokenizer(receive, "&");
 
@@ -91,62 +95,59 @@ public class SocketThread extends Thread {
             String group_name = strtok.nextToken();
             user_name = strtok.nextToken();
 
+            System.out.println("Thread ["+user_name+"] receive : "+receive);
+
             //화면에 그룹 이름 적용
             setting.group_name2.setText(group_name);
             //화면에 연결 사용자 추가
             setting.people2.setText(setting.people2.getText()+" "+user_name);
 
-
+            //연결 시작
             if(key.equals("START"))
             {
                 setting.receive_info2.setText(key);
 
-                ObjectOutputStream outputStream = new ObjectOutputStream(sock.getOutputStream());
-                outputStream.writeObject("CONNECT_COMPLETE");
-                outputStream.flush();
+                sendResponse("CONNECT_COMPLETE");
 
                 //입력 대기
-                while(true)
+                while(sock!=null)
                 {
                     if(sock.isClosed() || !sock.isConnected())
                         break;
+
                     inputStream = new ObjectInputStream(sock.getInputStream());
                     obj = inputStream.readObject();
 
                     receive = String.valueOf(obj);
                     strtok = new StringTokenizer(receive, "=");
 
-                    //System.out.println("receive : "+receive);
-
                     //입력 종류
                     String input_type = strtok.nextToken();
-                    String parse_str = strtok.nextToken();
+                    String parse_str = "";
 
                     //마우스
                     if(input_type.equals("MOUSE"))
                     {
+                        parse_str = strtok.nextToken();
                         inputMouse(parse_str);
-
                     }
                     //키보드
                     else if(input_type.equals("KEYBOARD"))
                     {
+                        parse_str = strtok.nextToken();
                         inputKeyboard(parse_str);
                     }
                     //종료
                     else
                     {
-                        outputStream = new ObjectOutputStream(sock.getOutputStream());
-                        outputStream.writeObject("CONNECT_FINISH");
-                        outputStream.flush();
-                        sock.close();
+                        disconnect();
                         break;
                     }
 
-                    setting.receive_info2.setText(input_type+"_PROCESS_COMPLETE");
-                    outputStream = new ObjectOutputStream(sock.getOutputStream());
-                    outputStream.writeObject(input_type+"_PROCESS_COMPLETE");
-                    outputStream.flush();
+                    String msg = input_type + "_PROCESS_COMPLETE";
+                    setting.receive_info2.setText(msg);
+
+                    sendResponse(msg);
                 }
             }
 
@@ -156,6 +157,30 @@ public class SocketThread extends Thread {
             e.printStackTrace();
             System.err.println("exception 발생");
         }
+    }
+
+    //연결 해제
+    public void disconnect()
+    {
+        try
+        {
+            sendResponse("CONNECT_FINISH");
+            sock.close();
+            sock = null;
+            callback.removeCallback(this);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    //응답 송신
+    private void sendResponse(String msg) throws Exception
+    {
+        outputStream = new ObjectOutputStream(sock.getOutputStream());
+        outputStream.writeObject(msg);
+        outputStream.flush();
     }
 
     //키보드 인풋 처리
@@ -176,7 +201,6 @@ public class SocketThread extends Thread {
             System.out.println(KeyEvent.getKeyText(key_code)+" RELEASE");
         }
     }
-
 
     //마우스 인풋 처리
     private void inputMouse(String str)
@@ -261,6 +285,7 @@ public class SocketThread extends Thread {
             }
         }
     }
+
     private String getLocalServerIp()
     {
         try

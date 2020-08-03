@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -16,6 +17,8 @@ import com.jun.moiso.R;
 import com.jun.moiso.adapter.ViewPagerAdapter;
 import com.jun.moiso.fragment.KeyboardFragment;
 import com.jun.moiso.fragment.MouseFragment;
+import com.jun.moiso.interfaces.SocketCallback;
+import com.jun.moiso.socket.SocketLibrary;
 
 public class ControlActivity extends AppCompatActivity {
 
@@ -28,7 +31,7 @@ public class ControlActivity extends AppCompatActivity {
     public TabLayout tabLayout;
     public Button controlAuthority_btn;
 
-    public float call_custom_move_limit;
+    private SocketLibrary socketLibrary;
 
     private static final String TAG = "ControlActivity";
 
@@ -40,13 +43,47 @@ public class ControlActivity extends AppCompatActivity {
 
         controlAuthority_btn = (Button) findViewById(R.id.control_authority_btn_control);
 
+        socketLibrary = SocketLibrary.getInstance();
+
+        //종료 신호 수신 콜백
+        SocketCallback waitCallback = new SocketCallback() {
+            @Override
+            public void callback(boolean result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "연결 종료", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
+            }
+        };
+        socketLibrary.waitSocketClose(waitCallback);//종료 신호 수신 대기
 
         createFragment();
         createViewpager();
         settingTabLayout();
     }
 
+    @Override
+    protected void onDestroy() {
 
+        //액티비티 finish 되면 자동으로 연결 종료
+        SocketCallback disconnectCallback = new SocketCallback() {
+            @Override
+            public void callback(boolean result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "연결 종료", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        };
+
+        socketLibrary.disconnect(disconnectCallback);
+        super.onDestroy();
+    }
 
     //fragment 생성
     public void createFragment()
