@@ -21,26 +21,12 @@ public class SocketThread extends Thread {
     //연결된 사용자 이름
     private String user_name;
 
+    //Setting에서 받은 callback 객체
     private Callback callback;
-
 
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
 
-
-    public SocketThread() {
-    }
-
-
-
-    public SocketThread(Socket sock) {
-
-        this.sock = sock;
-    }
-
-    public SocketThread(Setting setting) {
-       this.setting = setting;
-    }
 
     public SocketThread(Socket sock, Setting setting, Callback callback) {
 
@@ -51,7 +37,8 @@ public class SocketThread extends Thread {
 
     @Override
     public void run() {
-        try{
+        try
+        {
             robot = new Robot();
         }
         catch (Exception e)
@@ -82,7 +69,7 @@ public class SocketThread extends Thread {
             {
                 if(!sock.isClosed())
                     sock.close();
-                System.out.println("exception 발생");
+                System.out.println("[Exception] input receive FAIL");
             }
 
             //수신 메시지 String 변환
@@ -100,7 +87,7 @@ public class SocketThread extends Thread {
             //화면에 그룹 이름 적용
             setting.group_name2.setText(group_name);
             //화면에 연결 사용자 추가
-            setting.people2.setText(Integer.parseInt(setting.people2.getText())+1+"");
+            memberCountUp();
 
             //연결 시작
             if(key.equals("START"))
@@ -155,33 +142,65 @@ public class SocketThread extends Thread {
         catch(Exception e)
         {
             e.printStackTrace();
-            System.err.println("exception 발생");
+            System.err.println("Connect Exception");
+
+            socketClose();
+            memberCountDown();
+            callback.removeCallback(this);
         }
     }
 
     //연결 해제
     public void disconnect()
     {
+        sendResponse("CONNECT_FINISH");
+        socketClose();
+        memberCountDown();
+        callback.removeCallback(this);
+    }
+
+    //소켓 닫기
+    private void socketClose()
+    {
         try
         {
-            sendResponse("CONNECT_FINISH");
             sock.close();
             sock = null;
-            setting.people2.setText(Integer.parseInt(setting.people2.getText())-1+"");
-            callback.removeCallback(this);
         }
         catch (Exception e)
         {
             e.printStackTrace();
+            System.err.println("Socket Close Exception");
         }
     }
 
-    //응답 송신
-    private void sendResponse(String msg) throws Exception
+    //member 수 늘임
+    private void memberCountUp()
     {
-        outputStream = new ObjectOutputStream(sock.getOutputStream());
-        outputStream.writeObject(msg);
-        outputStream.flush();
+        setting.people2.setText(Integer.parseInt(setting.people2.getText())+1+"");
+    }
+
+    //member 수 줄임
+    private void memberCountDown()
+    {
+        setting.people2.setText(Integer.parseInt(setting.people2.getText())-1+"");
+    }
+
+
+    //응답 송신
+    private void sendResponse(String msg)
+    {
+        try
+        {
+            outputStream = new ObjectOutputStream(sock.getOutputStream());
+            outputStream.writeObject(msg);
+            outputStream.flush();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            System.err.println("Send Response Exception");
+        }
     }
 
     //키보드 인풋 처리
@@ -286,7 +305,7 @@ public class SocketThread extends Thread {
             }
         }
     }
-
+/*
     private String getLocalServerIp()
     {
         try
@@ -307,4 +326,5 @@ public class SocketThread extends Thread {
         catch (SocketException ex) {}
         return null;
     }
+    */
 }
