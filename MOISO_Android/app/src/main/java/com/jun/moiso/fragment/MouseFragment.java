@@ -1,5 +1,7 @@
 package com.jun.moiso.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -33,6 +35,11 @@ public class MouseFragment extends Fragment implements View.OnTouchListener {
 
     private View v;
 
+    private int MOUSE_SENSITIVITY, WHEEL_SENSITIVITY;
+
+    //자동 저장
+    private SharedPreferences sf;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +51,11 @@ public class MouseFragment extends Fragment implements View.OnTouchListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_mouse, container, false);
+
+        sf = getActivity().getSharedPreferences("SETTING", Context.MODE_PRIVATE);
+        MOUSE_SENSITIVITY = sf.getInt("MOUSE_SENSITIVITY",1);
+        WHEEL_SENSITIVITY = sf.getInt("WHEEL_SENSITIVITY",1);
+
 
         socketLibrary = SocketLibrary.getInstance();
         myApplication = (MyApplication) getActivity().getApplication();
@@ -92,7 +104,7 @@ public class MouseFragment extends Fragment implements View.OnTouchListener {
                     first_X = current_X;
                     first_Y = current_Y;
 
-                    socketLibrary.sendMouseDragEvent(value_X,value_Y, myApplication.getMouse_sensitivity());
+                    socketLibrary.sendMouseDragEvent(value_X,value_Y, MOUSE_SENSITIVITY);
 
                     break;
                 case MotionEvent.ACTION_DOWN://터치 했을 때 좌표
@@ -136,13 +148,13 @@ public class MouseFragment extends Fragment implements View.OnTouchListener {
             if(view == wheel_up_btn)
             {
                 direction = "UP";
-                number = myApplication.getMouse_sensitivity()+"";
+                number = WHEEL_SENSITIVITY+"";
                 socketLibrary.sendMouseWheelEvent(direction, number);
             }
             else if(view == wheel_down_btn)
             {
                 direction = "DOWN";
-                number = myApplication.getMouse_sensitivity()+"";
+                number = WHEEL_SENSITIVITY+"";
                 socketLibrary.sendMouseWheelEvent(direction, number);
             }
             else//휠 바

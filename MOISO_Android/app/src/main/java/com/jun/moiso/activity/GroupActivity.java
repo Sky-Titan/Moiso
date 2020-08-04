@@ -10,14 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jun.moiso.R;
-import com.jun.moiso.adapter.MemberAdapter;
+import com.jun.moiso.adapter.GroupAdapter;
 import com.jun.moiso.databinding.ActivityGroupBinding;
 import com.jun.moiso.interfaces.SocketCallback;
 import com.jun.moiso.model.MemberListItem;
@@ -27,7 +29,7 @@ import com.jun.moiso.viewmodel.GroupViewModel;
 
 public class GroupActivity extends AppCompatActivity {
 
-    private static MemberAdapter memberAdapter;
+    private static GroupAdapter groupAdapter;
     ActivityGroupBinding binding;
 
     private static GroupViewModel viewModel;
@@ -36,6 +38,10 @@ public class GroupActivity extends AppCompatActivity {
     private EditText ip_edittext, port_edittext;
     private String group_name,user_name;
     private SocketLibrary socketLibrary;
+
+    //자동 저장
+    private SharedPreferences sf;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,10 @@ public class GroupActivity extends AppCompatActivity {
 
         socketLibrary = SocketLibrary.getInstance();
 
+        //저장된 IP 정보 가져오기
+        sf =getSharedPreferences("IP_INFO", MODE_PRIVATE);
+        editor = sf.edit();
+
         Intent intent = getIntent();
         group_name = intent.getStringExtra("group_name");
         user_name = intent.getStringExtra("user_name");
@@ -56,10 +66,47 @@ public class GroupActivity extends AppCompatActivity {
         viewModel.setGrop_name(group_name);
         viewModel.setSocketLibrary(socketLibrary);
 
+        //TODO : 나중에 그룹별로 서버에서 저장된 IP주소 불러와야함
         ip_edittext = (EditText) findViewById(R.id.ip_edittext_group);
+        ip_edittext.setText(sf.getString("IP",""));
+        ip_edittext.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                //저장을 하기위해 editor를 이용하여 값을 저장시켜준다.
+                editor.putString("IP", ip_edittext.getText().toString());
+                editor.commit();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         port_edittext = (EditText) findViewById(R.id.port_edittext_group);
+        port_edittext.setText(sf.getString("PORT","5001"));
+        port_edittext.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
 
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                editor.putString("PORT", port_edittext.getText().toString());
+                editor.commit();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         context = GroupActivity.this;
     }
@@ -76,13 +123,13 @@ public class GroupActivity extends AppCompatActivity {
             recyclerView.addItemDecoration(dividerItemDecoration);
 
             //adapter 적용
-            memberAdapter = new MemberAdapter(context, viewModel);
-            recyclerView.setAdapter(memberAdapter);
+            groupAdapter = new GroupAdapter(context, viewModel);
+            recyclerView.setAdapter(groupAdapter);
         }
         else
-            memberAdapter = (MemberAdapter)recyclerView.getAdapter();
+            groupAdapter = (GroupAdapter)recyclerView.getAdapter();
 
-        memberAdapter.setMemberListItems(memberListItems);//item list 적용
+        groupAdapter.setMemberListItems(memberListItems);//item list 적용
     }
 
     //TODO : 멤버 추가 리스너
@@ -119,7 +166,6 @@ public class GroupActivity extends AppCompatActivity {
                 });
             }
         };
-
 
         //연결 시작
         socketLibrary.connect(ip_edittext.getText().toString(), Integer.parseInt(port_edittext.getText().toString()), group_name, user_name, connectCallBack);

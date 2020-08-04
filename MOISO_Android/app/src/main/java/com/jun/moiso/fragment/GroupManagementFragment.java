@@ -20,7 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.jun.moiso.R;
-import com.jun.moiso.adapter.GroupAdapter;
+import com.jun.moiso.adapter.GroupManagementAdapter;
 import com.jun.moiso.databinding.FragmentGroupManagementBinding;
 import com.jun.moiso.model.GroupListItem;
 import com.jun.moiso.viewmodel.GroupManagementViewModel;
@@ -63,7 +63,7 @@ public class GroupManagementFragment extends Fragment {
     @BindingAdapter("items")
     public static void setItems(RecyclerView recyclerView,  ObservableArrayList<GroupListItem> groupListItems)
     {
-        GroupAdapter groupAdapter;
+        GroupManagementAdapter groupManagementAdapter;
 
         //Recyclerview 초기화
         if(recyclerView.getAdapter() == null)
@@ -73,13 +73,13 @@ public class GroupManagementFragment extends Fragment {
             recyclerView.addItemDecoration(dividerItemDecoration);
 
             //adapter 적용
-            groupAdapter = new GroupAdapter(context, viewModel);
-            recyclerView.setAdapter(groupAdapter);
+            groupManagementAdapter = new GroupManagementAdapter(context, viewModel);
+            recyclerView.setAdapter(groupManagementAdapter);
         }
         else
-            groupAdapter = (GroupAdapter)recyclerView.getAdapter();
+            groupManagementAdapter = (GroupManagementAdapter)recyclerView.getAdapter();
 
-        groupAdapter.setGroupListItems(groupListItems);//item list 적용
+        groupManagementAdapter.setGroupListItems(groupListItems);//item list 적용
     }
 
     //그룹 추가 버튼 리스너

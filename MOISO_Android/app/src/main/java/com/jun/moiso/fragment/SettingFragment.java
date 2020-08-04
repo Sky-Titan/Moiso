@@ -1,6 +1,8 @@
 package com.jun.moiso.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -21,6 +23,10 @@ public class SettingFragment extends Fragment {
 
     private NumberPicker mouse_sensitivity, mouse_wheel_sensitivity;
 
+    //자동 저장
+    private SharedPreferences sf;
+    private SharedPreferences.Editor editor;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +38,9 @@ public class SettingFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_setting, container, false);
+
+        sf = getActivity().getSharedPreferences("SETTING", Context.MODE_PRIVATE);
+        editor = sf.edit();
 
         setNumberPickers();
 
@@ -49,5 +58,25 @@ public class SettingFragment extends Fragment {
 
         mouse_wheel_sensitivity.setMinValue(1);
         mouse_wheel_sensitivity.setMaxValue(5);
+
+        mouse_sensitivity.setValue(sf.getInt("MOUSE_SENSITIVITY",1));
+        mouse_wheel_sensitivity.setValue(sf.getInt("WHEEL_SENSITIVITY",1));
+
+        mouse_sensitivity.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                editor.putInt("MOUSE_SENSITIVITY", i1);
+                editor.commit();
+            }
+        });
+
+        mouse_wheel_sensitivity.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                editor.putInt("WHEEL_SENSITIVITY", i1);
+                editor.commit();
+            }
+        });
+
     }
 }
