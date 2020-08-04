@@ -47,6 +47,13 @@ public class SocketLibrary {
     }
 
     //마우스 버튼 이벤트 송신
+    public void sendMouseWheelEvent(String direction, String number)
+    {
+        final String msg = "MOUSE=WHEEL&"+direction+"*"+number;
+        sendToSeverMsg(msg);
+    }
+
+    //마우스 버튼 이벤트 송신
     public void sendMouseButtonEvent(String direction, String movement)
     {
         final String msg = "MOUSE=BUTTON&"+direction+"/"+movement;

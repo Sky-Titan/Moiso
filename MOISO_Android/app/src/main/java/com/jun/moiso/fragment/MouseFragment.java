@@ -21,7 +21,9 @@ public class MouseFragment extends Fragment implements View.OnTouchListener {
 
     private LinearLayout pad_layout_mouse;
     private Button left_btn, wheel_btn, right_btn;
+    private Button wheel_up_btn, wheel_bar_btn, wheel_down_btn;
 
+    private int first_wheel_Y,current_wheel_Y,wheel_value_Y = 0;//휠 용
     private int first_X,first_Y,current_X,current_Y,value_X=0,value_Y=0;//마우스 커서용
 
     private static final String TAG = "MouseFragment";
@@ -55,6 +57,13 @@ public class MouseFragment extends Fragment implements View.OnTouchListener {
         left_btn.setOnTouchListener(this);
         wheel_btn.setOnTouchListener(this);
         right_btn.setOnTouchListener(this);
+
+        wheel_up_btn = (Button) v.findViewById(R.id.wheel_up_mouse);
+        wheel_bar_btn = (Button) v.findViewById(R.id.wheel_bar_mouse);
+        wheel_down_btn = (Button) v.findViewById(R.id.wheel_down_mouse);
+        wheel_up_btn.setOnTouchListener(this);
+        wheel_bar_btn.setOnTouchListener(this);
+        wheel_down_btn.setOnTouchListener(this);
 
         return v;
     }
@@ -119,7 +128,53 @@ public class MouseFragment extends Fragment implements View.OnTouchListener {
                 socketLibrary.sendMouseButtonEvent(direction, movement);
             }
         }
+        else//마우스 휠
+        {
+            String direction = "";
+            String number = "";
 
+            if(view == wheel_up_btn)
+            {
+                direction = "UP";
+                number = myApplication.getMouse_sensitivity()+"";
+                socketLibrary.sendMouseWheelEvent(direction, number);
+            }
+            else if(view == wheel_down_btn)
+            {
+                direction = "DOWN";
+                number = myApplication.getMouse_sensitivity()+"";
+                socketLibrary.sendMouseWheelEvent(direction, number);
+            }
+            else//휠 바
+            {
+                direction = "BAR";
+
+                //DOWN -> MOVE -> UP
+                switch (eventaction)
+                {
+                    case MotionEvent.ACTION_UP://터치 뗄 때
+                        break;
+                    case MotionEvent.ACTION_MOVE://터치 드래그할때
+
+                        current_wheel_Y = (int)motionEvent.getY();
+                        Log.d(TAG,"current_wheel_y : "+current_wheel_Y);
+
+                        wheel_value_Y = (current_wheel_Y - first_wheel_Y);
+
+                        first_wheel_Y = current_wheel_Y;
+
+                        number = wheel_value_Y+"";
+                        socketLibrary.sendMouseWheelEvent(direction, number);
+
+                        break;
+                    case MotionEvent.ACTION_DOWN://터치 했을 때 좌표
+                        first_wheel_Y = (int) motionEvent.getY();//첫 터치한 Y 좌표
+                        Log.d(TAG,"first_wheel_y : "+first_wheel_Y);
+
+                        break;
+                }
+            }
+        }
         return true;
     }
 }
