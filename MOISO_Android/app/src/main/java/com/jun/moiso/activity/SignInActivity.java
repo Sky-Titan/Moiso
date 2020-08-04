@@ -18,22 +18,12 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        //removeActionBar();
-
     }
 
-    //상,하단 바 제거
-    public void removeActionBar()
-    {
-        int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
-        int newUiOptions = uiOptions;
-        newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
-    }
 
     public void loginClick(View v)
     {
+        //TODO : 서버와 로그인 연동
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
