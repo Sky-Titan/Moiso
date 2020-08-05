@@ -1,0 +1,28 @@
+WebContent
+	├───	JSP		
+	│	      ├ login.jsp
+	│	      ├ signup.jsp
+	│	      └ delacount.jsp
+	└───	JSP_DB	
+		      ├ login_DB.jsp
+		      ├ signup_DB.jsp
+		      └ delacount_DB.jsp	
+
+로그인 화면
+http://52.79.222.198:8080/MOISO/JSP/login.jsp
+<input name = "input_user_ID" type = "text"/>
+<input name = "input_user_PW" type = "text"/>
+
+
+회원가입 화면
+http://localhost:8080/server/MOISO/JSP/signup.jsp
+<input name = "input_user_ID" type = "text"/>	
+<input name = "input_user_PW" type = "text"/>
+<input name = "input_user_PWC" type = "text"/>	//비밀번호 확인
+<input name = "input_user_Email" type = "text"/>
+<input name = "input_user_Nickname" type = "text"/>
+
+
+회원 탈퇴 화면
+http://52.79.222.198:8080/MOISO/JSP/delacount.jsp
+<input name = "input_user_ID" type = "text"/>	//세션 유지는 아직 잘 모름 더해봐야함 그냥 아이디로 검색하면 삭제하는걸로
