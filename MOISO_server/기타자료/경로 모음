@@ -15,7 +15,7 @@ http://52.79.222.198:8080/MOISO/JSP/login.jsp
 
 
 회원가입 화면
-http://localhost:8080/server/MOISO/JSP/signup.jsp
+http://52.79.222.198:8080/MOISO/JSP/signup.jsp
 <input name = "input_user_ID" type = "text"/>	
 <input name = "input_user_PW" type = "text"/>
 <input name = "input_user_PWC" type = "text"/>	//비밀번호 확인
