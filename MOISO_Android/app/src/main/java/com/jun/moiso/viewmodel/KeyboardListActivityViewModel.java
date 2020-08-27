@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.jun.moiso.model.CustomKeyboard;
 
-public class KeyboardListViewModel extends ViewModel {
-
+public class KeyboardListActivityViewModel extends ViewModel {
     private ObservableArrayList<CustomKeyboard> item_list = new ObservableArrayList<>();
     private int remove_position = 0;//삭제된 아이템 위치
     private int add_position = 0;//추가된 아이템 위치

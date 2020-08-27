@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.jun.moiso.viewmodel.GroupManagementViewModel" />
+            type="com.jun.moiso.viewmodel.KeyboardListFragmentViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -12,51 +12,50 @@
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:paddingHorizontal="10dp"
-        tools:context=".fragment.GroupManagementFragment">
+        tools:context=".fragment.KeyboardListFragment">
 
         <TextView
-            android:id="@+id/grouplist_text"
+            android:id="@+id/keyboardlist_text"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/blue_for_splash"
             android:textStyle="bold"
-            android:text="Group List" />
+            android:text="키보드 커스텀" />
 
         <View
             android:id="@+id/line_view"
             android:background="@color/blue_for_splash"
-            app:layout_constraintTop_toBottomOf="@+id/grouplist_text"
+            app:layout_constraintTop_toBottomOf="@+id/keyboardlist_text"
             android:layout_marginVertical="10dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"></View>
 
         <ImageButton
-            android:id="@+id/group_add_btn_groupmanagement"
+            android:id="@+id/keyboardcustom_add_btn_keyboardlist_fragment"
             android:layout_marginVertical="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
+            android:onClick="addCustomOnClikc"
             android:src="@drawable/ic_baseline_add_box_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/line_view"></ImageButton>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_groupmanagement"
-            items="@{viewModel.item_list}"
+            android:id="@+id/recyclerview_keyboardlist_fragment"
+            items_fragment="@{viewModel.item_list}"
             app:layout_constrainedHeight="true"
             app:flow_verticalBias="0"
-            android:layout_marginBottom="@dimen/bottomnavigation_height"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@+id/group_add_btn_groupmanagement"
+            app:layout_constraintTop_toBottomOf="@+id/keyboardcustom_add_btn_keyboardlist_fragment"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             ></androidx.recyclerview.widget.RecyclerView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

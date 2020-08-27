@@ -25,28 +25,32 @@ import com.jun.moiso.activity.KeyboardCustomActivity;
 import com.jun.moiso.activity.KeyboardListActivity;
 import com.jun.moiso.database.KeyboardDB;
 import com.jun.moiso.databinding.KeyboardlistItemBinding;
+
 import com.jun.moiso.model.CustomKeyboard;
 
-import com.jun.moiso.viewmodel.KeyboardListViewModel;
+import com.jun.moiso.viewmodel.KeyboardListActivityViewModel;
+
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 
-public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.KeyboardViewHolder<KeyboardlistItemBinding>> {
+public class KeyboardListActivityAdapter extends RecyclerView.Adapter<KeyboardListActivityAdapter.KeyboardViewHolder<KeyboardlistItemBinding>> {
 
-    private static String TAG = "KeyboardAdapter";
+    private static String TAG = "KeyboardListActivityAdapter";
 
-    private KeyboardListViewModel keyboardListViewModel;
+    private KeyboardListActivityViewModel keyboardListActivityViewModel;
+
     private KeyboardListActivity activity;
+
 
     private int lastPosition = 0; //item list의 변경전 크기를 나타낸다.
     private KeyboardDB keyboardDB;
     private ObservableArrayList<CustomKeyboard> customKeyboards = new ObservableArrayList<>() ;
     private Context context;
 
-    public KeyboardAdapter(Context context, KeyboardListViewModel keyboardListViewModel, KeyboardListActivity activity) {
+    public KeyboardListActivityAdapter(Context context, KeyboardListActivityViewModel keyboardListActivityViewModel, KeyboardListActivity activity) {
         this.context = context;
-        this.keyboardListViewModel = keyboardListViewModel;
+        this.keyboardListActivityViewModel = keyboardListActivityViewModel;
         this.activity = activity;
         keyboardDB = KeyboardDB.getInstance(context);
     }
@@ -69,39 +73,43 @@ public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.Keyboa
         final int custom_id = holder.binding().getItem().getCustom_id();
         final String owner_id = holder.binding().getItem().getOwner_id();
 
+
         holder.binding().getRoot().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                builder.setTitle(custom_name).setMessage("작업을 선택해주세요.");
-                builder.setNegativeButton("사용", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent();
-                        intent.putExtra("custom_id", custom_id);
-                        intent.putExtra("custom_name", custom_name);
-                        intent.putExtra("owner_id", owner_id);
-                        activity.setResult(Activity.RESULT_OK, intent);
-                        activity.finish();
-                    }
-                });
+                    builder.setTitle(custom_name).setMessage("작업을 선택해주세요.");
+                    builder.setNegativeButton("사용", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent();
+                            intent.putExtra("custom_id", custom_id);
+                            intent.putExtra("custom_name", custom_name);
+                            intent.putExtra("owner_id", owner_id);
+                            activity.setResult(Activity.RESULT_OK, intent);
+                            activity.finish();
+                        }
+                    });
 
-                builder.setPositiveButton("버튼 편집", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(context, KeyboardCustomActivity.class);
-                        intent.putExtra("custom_id", custom_id);
-                        intent.putExtra("custom_name", custom_name);
-                        intent.putExtra("owner_id", owner_id);
-                        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
+                    builder.setPositiveButton("버튼 편집", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent(context, KeyboardCustomActivity.class);
+                            intent.putExtra("custom_id", custom_id);
+                            intent.putExtra("custom_name", custom_name);
+                            intent.putExtra("owner_id", owner_id);
+                            intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            });
+
+
+
         //삭제 버튼 리스너
         ImageButton delete = (ImageButton) holder.itemView.findViewById(R.id.keyboarddelete_btn_item);
         delete.setOnClickListener(new View.OnClickListener() {
@@ -168,7 +176,7 @@ public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.Keyboa
             public void onAnimationStart(Animation animation) {
                 //item list에서 제거
                 lockClickable(viewToAnimate, delete_btn);
-                keyboardListViewModel.removeItem(position);
+                keyboardListActivityViewModel.removeItem(position);
                 lastPosition--;
             }
 
@@ -218,15 +226,15 @@ public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.Keyboa
     public void notifyItemChanged()
     {
         //item이 추가 되었는지, 삭제 되었는지 파악
-        if(keyboardListViewModel.isAdd())
+        if(keyboardListActivityViewModel.isAdd())
         {
-            notifyItemInserted(keyboardListViewModel.getAdd_position());
-            keyboardListViewModel.setAdd(false);
+            notifyItemInserted(keyboardListActivityViewModel.getAdd_position());
+            keyboardListActivityViewModel.setAdd(false);
         }
-        else if(keyboardListViewModel.isRemove())
+        else if(keyboardListActivityViewModel.isRemove())
         {
-            notifyItemRemoved(keyboardListViewModel.getRemove_position());
-            keyboardListViewModel.setRemove(false);
+            notifyItemRemoved(keyboardListActivityViewModel.getRemove_position());
+            keyboardListActivityViewModel.setRemove(false);
         }
         else//todo : 내용 업데이트
         {
@@ -240,16 +248,7 @@ public class KeyboardAdapter extends RecyclerView.Adapter<KeyboardAdapter.Keyboa
         public KeyboardViewHolder(final View v){
             super(v);
             this.binding = (T) DataBindingUtil.bind(v);
-      /*      binding.getRoot().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO : item 포지션에 따른 내용 삽입 수정
 
-
-
-                }
-            });
-*/
         }
 
         public T binding() {

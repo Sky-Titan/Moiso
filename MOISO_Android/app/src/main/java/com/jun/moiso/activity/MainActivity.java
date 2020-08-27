@@ -10,8 +10,8 @@ import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jun.moiso.R;
 import com.jun.moiso.adapter.ViewPagerAdapter;
-import com.jun.moiso.fragment.GroupManagementFragment;
-import com.jun.moiso.fragment.ProfileFragment;
+import com.jun.moiso.fragment.ConnectFragment;
+import com.jun.moiso.fragment.KeyboardListFragment;
 import com.jun.moiso.fragment.SettingFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private ViewPagerAdapter viewPagerAdapter;
 
-    private GroupManagementFragment groupManagementFragment;
-    private ProfileFragment profileFragment;
+    private ConnectFragment connectFragment;
+    private KeyboardListFragment keyboardListFragment;
     private SettingFragment settingFragment;
 
     private BottomNavigationView bottomNavigationView;
@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
     //프래그먼트 생성
     public void setFragments()
     {
-        groupManagementFragment = new GroupManagementFragment();
-        profileFragment = new ProfileFragment();
+        connectFragment = new ConnectFragment();
+        keyboardListFragment = new KeyboardListFragment();
         settingFragment = new SettingFragment();
     }
 
@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
     public void setViewPagerAdapter()
     {
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),getLifecycle());
-        viewPagerAdapter.addFragment(groupManagementFragment);
-        viewPagerAdapter.addFragment(profileFragment);
+        viewPagerAdapter.addFragment(connectFragment);
+        viewPagerAdapter.addFragment(keyboardListFragment);
         viewPagerAdapter.addFragment(settingFragment);
 
         viewPager.setAdapter(viewPagerAdapter);
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.navigation_group :
                         viewPager.setCurrentItem(0);
                         return true;
-                    case R.id.navigation_profile :
+                    case R.id.navigation_keyboard:
                         viewPager.setCurrentItem(1);
                         return true;
                     case R.id.navigation_setting :

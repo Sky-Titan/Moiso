@@ -2,9 +2,7 @@ package com.jun.moiso.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.animation.Animator;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -54,7 +52,7 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                callSignInActivity();
+                callMainActivity();
             }
 
             @Override
@@ -65,9 +63,9 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     //로그인 액티비티 호출
-    public void callSignInActivity()
+    public void callMainActivity()
     {
-        Intent intent = new Intent(this, SignInActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }

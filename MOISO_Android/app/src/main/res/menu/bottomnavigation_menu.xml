@@ -10,9 +10,9 @@
         android:enabled="true"
         />
     <item
-        android:id="@+id/navigation_profile"
-        android:title="프로필 보기"
-        android:icon="@drawable/ic_baseline_account_box_48"
+        android:id="@+id/navigation_keyboard"
+        android:title="키보드 리스트"
+        android:icon="@drawable/ic_baseline_keyboard_48"
         app:showAsAction="always"
         android:enabled="true"
         ></item>
