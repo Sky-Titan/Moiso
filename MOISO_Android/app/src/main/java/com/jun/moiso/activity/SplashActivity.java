@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jun.moiso.R;
@@ -20,8 +21,8 @@ public class SplashActivity extends AppCompatActivity {
 
         removeActionBar();
 
-        TextView mosio_textview = (TextView) findViewById(R.id.moiso_text_splash);
-        doAnimation(mosio_textview,R.anim.alpha_create);
+        ImageView mosio_icon = (ImageView) findViewById(R.id.moiso_ic_splash);
+        doAnimation(mosio_icon,R.anim.alpha_create);
     }
 
 

@@ -29,7 +29,6 @@ public class ControlActivity extends AppCompatActivity {
     private KeyboardFragment keyboardFragment;
 
     public TabLayout tabLayout;
-    public Button controlAuthority_btn;
 
     private SocketLibrary socketLibrary;
 
@@ -41,7 +40,7 @@ public class ControlActivity extends AppCompatActivity {
         View view = getLayoutInflater().from(this).inflate(R.layout.activity_control,null);
         setContentView(view);
 
-        controlAuthority_btn = (Button) findViewById(R.id.control_authority_btn_control);
+
 
         socketLibrary = SocketLibrary.getInstance();
 

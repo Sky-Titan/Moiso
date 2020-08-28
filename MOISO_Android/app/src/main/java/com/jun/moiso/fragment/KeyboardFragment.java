@@ -93,7 +93,7 @@ public class KeyboardFragment extends Fragment {
     //call custom버튼이 이동할 수 있는 한계 계산
     private void calculateCustomMoveLimit()
     {
-        call_custom_move_limit = ((ControlActivity)getActivity()).controlAuthority_btn.getHeight() + ((ControlActivity)getActivity()).tabLayout.getHeight();
+        call_custom_move_limit = ((ControlActivity)getActivity()).tabLayout.getHeight();
     }
 
     @Override

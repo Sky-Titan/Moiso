@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="100dp"
+    android:paddingTop="80dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.MouseFragment">
 
     <LinearLayout
         android:id="@+id/linearlayout1_mouse"
         android:layout_marginTop="20dp"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
