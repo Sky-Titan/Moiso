@@ -1,7 +1,7 @@
 # Moiso
 2020년 제 8회 k-해커톤 영남권 팀 도르륵 '모이소(MOISO)' 프로젝트
 
-<img src=./img/poster.png width="250">
+<img src=./img/logo.png width="250">
 
 ## 관련 링크
 ------------------
