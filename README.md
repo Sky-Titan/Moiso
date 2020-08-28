@@ -32,16 +32,12 @@
 - OS
   - Android
   - Window
-  - Linux
 - Language
   - Java
-  - SQL
 - Library
   - Robot
 - Tools
   - AndroidStudio
-  - MySQL
-  - AWS
   - IntelliJ
   
 ## 3. 참조 이미지
