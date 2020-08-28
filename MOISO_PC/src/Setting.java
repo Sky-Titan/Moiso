@@ -28,14 +28,21 @@ public class Setting extends JFrame {
     //스레드 리스트
     private ArrayList<SocketThread> threads;
 
+    private String FONT_NAME = "고딕";
+    private int FONT_SIZE = 15;
 
     public Setting()
     {
         super("MOISO PC beta");
 
+        Toolkit kit = Toolkit.getDefaultToolkit();
+
+        Image image = kit.getImage("/logo.png");
+        setIconImage(new ImageIcon(getClass().getResource("/logo.png")).getImage());
+
         setLocation(550, 230);
         setSize(300, 500);
-        setBackground(Color.WHITE);
+        getContentPane().setBackground(new Color(98, 156, 246));
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -55,6 +62,8 @@ public class Setting extends JFrame {
 
 
         port_info = new JLabel("Port 번호 :");
+        port_info.setForeground(Color.white);
+        port_info.setFont(new Font(FONT_NAME, Font.BOLD, FONT_SIZE));
         port_info.setBounds(50, 50, 100, 50);
         add(port_info);
 
@@ -67,6 +76,8 @@ public class Setting extends JFrame {
 
 
         client_ip = new JLabel("외부 ip :");
+        client_ip.setForeground(Color.white);
+        client_ip.setFont(new Font(FONT_NAME, Font.BOLD, FONT_SIZE));
         client_ip.setBounds(80, 180, 150, 30);
         add(client_ip);
 
@@ -87,23 +98,33 @@ public class Setting extends JFrame {
 
 
         client_ip2 = new JLabel(currentIp);
+        client_ip2.setFont(new Font(FONT_NAME, Font.BOLD, FONT_SIZE));
+        client_ip2.setForeground(Color.white);
         client_ip2.setBounds(80, 200, 150, 30);
         add(client_ip2);
 
 
         people = new JLabel("연결 멤버 수 : ");
+        people.setForeground(Color.white);
+        people.setFont(new Font(FONT_NAME, Font.BOLD, FONT_SIZE));
         people.setBounds(80,300,150,30);
         add(people);
 
         people2 = new JLabel("0");
+        people2.setForeground(Color.white);
+        people2.setFont(new Font(FONT_NAME, Font.BOLD, FONT_SIZE));
         people2.setBounds(80,320,150,30);
         add(people2);
 
         receive_info = new JLabel("수신 신호 : ");
+        receive_info.setForeground(Color.white);
+        receive_info.setFont(new Font(FONT_NAME, Font.BOLD, FONT_SIZE));
         receive_info.setBounds(80, 360, 150, 30);
         add(receive_info);
 
         receive_info2 = new JLabel("x");
+        receive_info2.setForeground(Color.white);
+        receive_info2.setFont(new Font(FONT_NAME, Font.BOLD, FONT_SIZE));
         receive_info2.setBounds(80, 380, 150, 30);
         add(receive_info2);
 

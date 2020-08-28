@@ -1,0 +1,18 @@
+로그인 화면
+http://52.79.222.198:8080/server/resources/JSP/login_menu/login.jsp
+	<form id = "login_data" action = "login_DB.jsp" method="POST">
+		<input name = "input_user_ID" type= "text"/>
+		<input name = "input_user_PW" type= "text"/>
+		<input name = "submit" type="submit"/>
+	</form>
+
+
+회원가입 화면
+http://localhost:8080/server/resources/JSP/login_menu/signup.jsp
+	<form action = "signup_DB.jsp" id = "signup_data" method="POST">
+		<input name = "input_user_ID" type= "text"/>
+		<input name = "input_user_PW" type= "text"/>
+		<input name = "input_user_Email" type= "text"/>
+		<input name = "input_user_Nickname" type= "text"/>
+		<input name = "submit" type="submit"/>
+	</form>

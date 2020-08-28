@@ -1,0 +1,31 @@
+시작
+START&그룹이름&연결자 ID
+
+입력 종류(input_type)
+MOUSE, KEYBOARD
+
+1) MOUSE=
+모션(motion)
+- DRAG & (X/Y)
+- BUTTON & (LEFT/PRESS 또는 RELEASE, WHEEL, RIGHT)
+- WHEEL & (UP, BAR, DOWN)
+
+EX) MOUSE=DRAG&X/Y*감도
+EX) MOUSE=BUTTON&LEFT/PRESS
+EX) MOUSE=WHEEL&UP*감도
+
+2) KEYBOARD=
+- 키코드 & (PRESS, RELEASE)
+
+
+종료
+END
+
+
+
+아스키코드
+A~Z : 65~90
+
+a~z : 97~122
+
+[ : 

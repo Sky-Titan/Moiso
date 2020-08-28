@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MOISO_PC:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MOISO_PC_jar</output-path>
+    <root id="archive" name="MOISO_PC.jar">
+      <element id="module-output" name="MOISO_PC" />
+    </root>
+  </artifact>
+</component>
