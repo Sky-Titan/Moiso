@@ -3,11 +3,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.Enumeration;
 import java.util.StringTokenizer;
 
 public class SocketThread extends Thread {
@@ -84,8 +80,6 @@ public class SocketThread extends Thread {
 
             System.out.println("Thread ["+user_name+"] receive : "+receive);
 
-            //화면에 그룹 이름 적용
-            setting.group_name2.setText(group_name);
             //화면에 연결 사용자 추가
             memberCountUp();
 

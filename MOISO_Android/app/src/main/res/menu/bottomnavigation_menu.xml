@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/navigation_group"
-        android:title="그룹 관리"
-        android:icon="@drawable/ic_baseline_group_48"
+        android:id="@+id/navigation_connect"
+        android:title="PC 연결"
+        android:icon="@drawable/ic_baseline_computer_48"
         app:showAsAction="always"
         android:enabled="true"
         />

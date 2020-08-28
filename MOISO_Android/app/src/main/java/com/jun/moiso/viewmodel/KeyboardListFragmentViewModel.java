@@ -75,5 +75,6 @@ public class KeyboardListFragmentViewModel extends ViewModel {
     public void setItem_list(ObservableArrayList<CustomKeyboard> item_list) {
         this.item_list.clear();
         this.item_list.addAll(item_list);
+        isUpdate = true;
     }
 }

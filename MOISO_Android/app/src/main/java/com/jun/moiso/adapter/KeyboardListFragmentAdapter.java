@@ -202,6 +202,7 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
     //아이템 변경 알림
     public void notifyItemChanged()
     {
+        Log.d(TAG,"노티");
         //item이 추가 되었는지, 삭제 되었는지 파악
         if(keyboardListFragmentViewModel.isAdd())
         {
@@ -215,7 +216,8 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
         }
         else//todo : 내용 업데이트
         {
-
+            notifyDataSetChanged();
+            keyboardListFragmentViewModel.setUpdate(false);
         }
     }
 

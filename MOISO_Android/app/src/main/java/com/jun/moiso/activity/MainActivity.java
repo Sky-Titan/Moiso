@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId())
                 {
-                    case R.id.navigation_group :
+                    case R.id.navigation_connect:
                         viewPager.setCurrentItem(0);
                         return true;
                     case R.id.navigation_keyboard:

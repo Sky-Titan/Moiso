@@ -46,10 +46,25 @@ public class KeyboardListActivity extends AppCompatActivity {
         myApplication = (MyApplication)getApplication();
         keyboardDB = KeyboardDB.getInstance(this);
 
-        viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
-
         context = KeyboardListActivity.this;
         activity = this;
+    }
+
+    @Override
+    public void onStart() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
+
+                if(keyboardListActivityAdapter != null)
+                {
+                    keyboardListActivityAdapter.setCustomKeyboardList(viewModel.getItem_list());
+                }
+            }
+        });
+        thread.start();
+        super.onStart();
     }
 
     //viewmodel의 item list에 변경 생길 때마다 호출

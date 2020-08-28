@@ -15,7 +15,7 @@ public class Setting extends JFrame {
 
     private JLabel port_info;
     private JTextField port_number;
-    public JLabel client_ip,client_ip2, group_name, group_name2, people, people2;
+    public JLabel client_ip,client_ip2, people, people2;
     public JLabel receive_info,receive_info2;
 
     private ServerSocket serverSocket;
@@ -90,13 +90,6 @@ public class Setting extends JFrame {
         client_ip2.setBounds(80, 200, 150, 30);
         add(client_ip2);
 
-        group_name = new JLabel("그룹 이름 : ");
-        group_name.setBounds(80, 240, 150, 30);
-        add(group_name);
-
-        group_name2 = new JLabel("x");
-        group_name2.setBounds(80, 260, 150, 30);
-        add(group_name2);
 
         people = new JLabel("연결 멤버 수 : ");
         people.setBounds(80,300,150,30);

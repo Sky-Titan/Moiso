@@ -64,5 +64,15 @@
             android:layout_height="wrap_content"></Button>
     </LinearLayout>
 
+    <TextView
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        android:text="입력한 정보는 자동으로 저장됩니다."
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="@id/linearlayout_connect"
+        app:layout_constraintEnd_toEndOf="@id/linearlayout_connect"
+        app:layout_constraintTop_toBottomOf="@id/linearlayout_connect"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
