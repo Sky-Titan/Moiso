@@ -31,7 +31,7 @@ public class Setting extends JFrame {
 
     public Setting()
     {
-        super("MOISO");
+        super("MOISO PC beta");
 
         setLocation(550, 230);
         setSize(300, 500);
