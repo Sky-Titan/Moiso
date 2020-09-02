@@ -25,7 +25,7 @@ import com.jun.moiso.viewmodel.KeyboardListActivityViewModel;
 
 public class KeyboardListActivity extends AppCompatActivity {
 
-    private static KeyboardListActivityAdapter keyboardListActivityAdapter;
+    private static KeyboardListActivityAdapter keyboardAdapter;
     ActivityKeyboardListBinding binding;
 
     private MyApplication myApplication;
@@ -34,6 +34,8 @@ public class KeyboardListActivity extends AppCompatActivity {
     private static KeyboardListActivity activity;
     private static KeyboardListActivityViewModel viewModel;
     private static Context context;
+
+    private static final String TAG = "KeyboardListActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,18 +54,8 @@ public class KeyboardListActivity extends AppCompatActivity {
 
     @Override
     public void onStart() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
 
-                if(keyboardListActivityAdapter != null)
-                {
-                    keyboardListActivityAdapter.setCustomKeyboardList(viewModel.getItem_list());
-                }
-            }
-        });
-        thread.start();
+        renewalList();
         super.onStart();
     }
 
@@ -79,13 +71,35 @@ public class KeyboardListActivity extends AppCompatActivity {
             recyclerView.addItemDecoration(dividerItemDecoration);
 
             //adapter 적용
-            keyboardListActivityAdapter = new KeyboardListActivityAdapter(context, viewModel, activity);
-            recyclerView.setAdapter(keyboardListActivityAdapter);
+            keyboardAdapter = new KeyboardListActivityAdapter(context, viewModel, activity);
+            recyclerView.setAdapter(keyboardAdapter);
         }
         else
-            keyboardListActivityAdapter = (KeyboardListActivityAdapter)recyclerView.getAdapter();
+            keyboardAdapter = (KeyboardListActivityAdapter)recyclerView.getAdapter();
 
-        keyboardListActivityAdapter.setCustomKeyboardList(customKeyboards);//item list 적용
+        keyboardAdapter.setCustomKeyboardList(customKeyboards);//item list 적용
+    }
+
+    //새로고침
+    public void renewalList()
+    {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
+
+                if(keyboardAdapter != null)
+                {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
+                        }
+                    });
+                }
+            }
+        });
+        thread.start();
     }
 
     //커스텀 키보드 추가 리스너

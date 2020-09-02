@@ -30,6 +30,9 @@ import com.jun.moiso.databinding.FragmentKeyboardListBinding;
 import com.jun.moiso.model.CustomKeyboard;
 import com.jun.moiso.viewmodel.KeyboardListFragmentViewModel;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 
 public class KeyboardListFragment extends Fragment {
 
@@ -108,18 +111,7 @@ public class KeyboardListFragment extends Fragment {
     @Override
     public void onStart() {
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
-
-                if(keyboardAdapter != null)
-                {
-                    keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
-                }
-            }
-        });
-        thread.start();
+        renewalList();
         super.onStart();
     }
 
@@ -143,6 +135,28 @@ public class KeyboardListFragment extends Fragment {
             keyboardAdapter = (KeyboardListFragmentAdapter)recyclerView.getAdapter();
 
         keyboardAdapter.setCustomKeyboardList(customKeyboards);//item list 적용
+    }
+
+    public void renewalList()
+    {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
+
+                if(keyboardAdapter != null)
+                {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
+                        }
+                    });
+                }
+            }
+        });
+        thread.start();
     }
 
 }
