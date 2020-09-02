@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -20,10 +22,11 @@ import com.jun.moiso.R;
 import com.jun.moiso.adapter.KeyboardListActivityAdapter;
 import com.jun.moiso.database.KeyboardDB;
 import com.jun.moiso.databinding.ActivityKeyboardListBinding;
+import com.jun.moiso.interfaces.KeyboardList;
 import com.jun.moiso.model.CustomKeyboard;
 import com.jun.moiso.viewmodel.KeyboardListActivityViewModel;
 
-public class KeyboardListActivity extends AppCompatActivity {
+public class KeyboardListActivity extends AppCompatActivity implements KeyboardList {
 
     private static KeyboardListActivityAdapter keyboardAdapter;
     ActivityKeyboardListBinding binding;
@@ -55,6 +58,7 @@ public class KeyboardListActivity extends AppCompatActivity {
     @Override
     public void onStart() {
 
+        Log.d(TAG, "onStart");
         renewalList();
         super.onStart();
     }
@@ -80,30 +84,30 @@ public class KeyboardListActivity extends AppCompatActivity {
         keyboardAdapter.setCustomKeyboardList(customKeyboards);//item list 적용
     }
 
-    //새로고침
+    @Override
     public void renewalList()
     {
-        Thread thread = new Thread(new Runnable() {
+        new AsyncTask<Void, Void, ObservableArrayList<CustomKeyboard>>(){
             @Override
-            public void run() {
-                viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
+            protected void onPostExecute(ObservableArrayList<CustomKeyboard> customKeyboards) {
+                super.onPostExecute(customKeyboards);
 
+                viewModel.setItem_list(customKeyboards);
                 if(keyboardAdapter != null)
-                {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
-                        }
-                    });
-                }
+                    keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
+
             }
-        });
-        thread.start();
+
+            @Override
+            protected ObservableArrayList<CustomKeyboard> doInBackground(Void... voids) {
+                return keyboardDB.selectCustomOf(myApplication.getUser_id());
+            }
+        }.execute();
+
     }
 
     //커스텀 키보드 추가 리스너
-    public void addCustomOnClikc(View v)
+    public void addCustomOnClick(View v)
     {
         //키보드 커스텀 이름 이력 후 생성하는 액티비티
         View dialogView = getLayoutInflater().inflate(R.layout.create_dialog, null);
@@ -112,20 +116,11 @@ public class KeyboardListActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView);
         builder.setTitle("커스텀 키보드 추가").setMessage("추가할 커스텀 키보드의 이름을 입력하세요.");
-        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //키보드 커스텀 생성 후 추가
-                viewModel.addItem(keyboardDB.insertCustom(editText.getText().toString(), myApplication.getUser_id()));
-            }
+        builder.setPositiveButton("확인", (dialogInterface, i) ->{
+            new Thread(() -> viewModel.addItem(keyboardDB.insertCustom(editText.getText().toString(), myApplication.getUser_id()))).start();
         });
 
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
+        builder.setNegativeButton("취소", null);
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();;

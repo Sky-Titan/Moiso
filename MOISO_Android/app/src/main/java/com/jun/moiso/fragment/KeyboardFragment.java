@@ -2,6 +2,7 @@ package com.jun.moiso.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -125,67 +126,67 @@ public class KeyboardFragment extends Fragment {
         parent_layout.addView(callCustom_btn);
         buttonArrayList.clear();
 
-        ObservableArrayList<CustomButton> customButtons = keyboardDB.selectButtonsOf(custom_id);
-
-        for(int i=0;i<customButtons.size();i++)
+        new AsyncTask<Void, Void, ObservableArrayList<CustomButton>>()
         {
-            final CustomButton customButton = customButtons.get(i);
+            @Override
+            protected void onPostExecute(ObservableArrayList<CustomButton> customButtons) {
+                super.onPostExecute(customButtons);
 
-            Button btn = new Button(getContext());
-            btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            btn.setPadding(5,5,5,5);
-            btn.setBackground(getActivity().getDrawable(R.drawable.mouse_center_btn_layout));
-            btn.setTag(customButton.getButton_id()+"&"+customButton.getButton_key());
-            btn.setText(customButton.getButton_text());
-            btn.setX(customButton.getPos_x());
-            btn.setY(customButton.getPos_y());
+                for(int i=0;i<customButtons.size();i++)
+                {
+                    final CustomButton customButton = customButtons.get(i);
 
-            btn.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    Button btn = new Button(getContext());
+                    btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    btn.setPadding(5,5,5,5);
+                    btn.setBackground(getActivity().getDrawable(R.drawable.mouse_center_btn_layout));
+                    btn.setTag(customButton.getButton_id()+"&"+customButton.getButton_key());
+                    btn.setText(customButton.getButton_text());
+                    btn.setX(customButton.getPos_x());
+                    btn.setY(customButton.getPos_y());
 
-                    Button btn = (Button)view;
+                    btn.setOnTouchListener( (view, motionEvent) -> {
 
-                    int key_code = parseKeyCode(btn.getTag().toString());
-                    String motion = "";
+                            int key_code = parseKeyCode(btn.getTag().toString());
+                            String motion = "";
 
-                    switch (motionEvent.getAction())
-                    {
-                        case MotionEvent.ACTION_UP :
-                            motion = "RELEASE";
-                            btn.setPressed(false);
-                            //송신 결과 리턴
-                            socketLibrary.sendKeyboardEvent(key_code, motion);
-                            Log.i(TAG,"Keyboard "+key_code+" "+motion+" Send Complete");
-                            break;
+                            switch (motionEvent.getAction())
+                            {
+                                case MotionEvent.ACTION_UP :
+                                    motion = "RELEASE";
+                                    btn.setPressed(false);
+                                    //송신 결과 리턴
+                                    socketLibrary.sendKeyboardEvent(key_code, motion);
+                                    Log.i(TAG,"Keyboard "+key_code+" "+motion+" Send Complete");
+                                    break;
 
-                            case MotionEvent.ACTION_DOWN :
-                                motion = "PRESS";
-                                btn.setPressed(true);
-                                //송신 결과 리턴
-                                socketLibrary.sendKeyboardEvent(key_code, motion);
-                                Log.i(TAG,"Keyboard "+key_code+" "+motion+" Send Complete");
-                                break;
-                    }
+                                case MotionEvent.ACTION_DOWN :
+                                    motion = "PRESS";
+                                    btn.setPressed(true);
+                                    //송신 결과 리턴
+                                    socketLibrary.sendKeyboardEvent(key_code, motion);
+                                    Log.i(TAG,"Keyboard "+key_code+" "+motion+" Send Complete");
+                                    break;
+                            }
 
+                            return true;
+                    });
 
+                    buttonArrayList.add(btn);
 
-                    return true;
+                    //부모 레이아웃에 추가
+                    parent_layout.addView(btn);
                 }
-            });
+            }
 
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            @Override
+            protected ObservableArrayList<CustomButton> doInBackground(Void... voids) {
 
-                }
-            });
+                ObservableArrayList<CustomButton> customButtons = keyboardDB.selectButtonsOf(custom_id);
+                return customButtons;
+            }
+        }.execute();
 
-            buttonArrayList.add(btn);
-
-            //부모 레이아웃에 추가
-            parent_layout.addView(btn);
-        }
     }
 
     private int parseKeyCode(String tag)

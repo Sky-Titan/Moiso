@@ -3,17 +3,23 @@ package com.jun.moiso.database;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
 
+import androidx.annotation.WorkerThread;
 import androidx.databinding.ObservableArrayList;
 
 import com.jun.moiso.model.CustomButton;
 import com.jun.moiso.model.CustomKeyboard;
 
+import io.reactivex.Observable;
+
+@WorkerThread
 public class KeyboardDB {
 
     private static KeyboardDB keyboardDB;
     private static SQLiteDatabase db;
     private static MyDBHelper myDBHelper;
+
 
 
     public static KeyboardDB getInstance(Context context)

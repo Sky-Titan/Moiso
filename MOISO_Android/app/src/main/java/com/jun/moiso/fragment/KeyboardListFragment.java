@@ -3,6 +3,7 @@ package com.jun.moiso.fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -27,6 +28,7 @@ import com.jun.moiso.adapter.KeyboardListActivityAdapter;
 import com.jun.moiso.adapter.KeyboardListFragmentAdapter;
 import com.jun.moiso.database.KeyboardDB;
 import com.jun.moiso.databinding.FragmentKeyboardListBinding;
+import com.jun.moiso.interfaces.KeyboardList;
 import com.jun.moiso.model.CustomKeyboard;
 import com.jun.moiso.viewmodel.KeyboardListFragmentViewModel;
 
@@ -34,7 +36,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 
-public class KeyboardListFragment extends Fragment {
+public class KeyboardListFragment extends Fragment implements KeyboardList {
 
     private static KeyboardListFragmentAdapter keyboardAdapter;
     FragmentKeyboardListBinding binding;
@@ -46,7 +48,6 @@ public class KeyboardListFragment extends Fragment {
     private static KeyboardListFragmentViewModel viewModel;
     private static Context context;
 
-    private static KeyboardListFragment fragment;
 
     private View v;
     private static final String TAG = "KeyboardListFragment";
@@ -70,12 +71,9 @@ public class KeyboardListFragment extends Fragment {
         myApplication = (MyApplication)getActivity().getApplication();
         keyboardDB = KeyboardDB.getInstance(getContext());
 
-        //viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
-
         ImageButton addCustom_btn = (ImageButton) v.findViewById(R.id.keyboardcustom_add_btn_keyboardlist_fragment);
-        addCustom_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        addCustom_btn.setOnClickListener( view -> {
+
                 //키보드 커스텀 이름 이력 후 생성하는 액티비티
                 View dialogView = getLayoutInflater().inflate(R.layout.create_dialog, null);
                 final EditText editText = (EditText) dialogView.findViewById(R.id.edittext_dialog);
@@ -83,28 +81,18 @@ public class KeyboardListFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setView(dialogView);
                 builder.setTitle("커스텀 키보드 추가").setMessage("추가할 커스텀 키보드의 이름을 입력하세요.");
-                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //키보드 커스텀 생성 후 추가
-                        viewModel.addItem(keyboardDB.insertCustom(editText.getText().toString(), myApplication.getUser_id()));
-                    }
+                builder.setPositiveButton("확인", (dialogInterface, i) ->{
+                    new Thread(() -> viewModel.addItem(keyboardDB.insertCustom(editText.getText().toString(), myApplication.getUser_id()))).start();
                 });
 
-                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
+                builder.setNegativeButton("취소", null);
 
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();;
-            }
         });
 
         context = getContext();
-        fragment = this;
+
         return v;
     }
 
@@ -128,7 +116,7 @@ public class KeyboardListFragment extends Fragment {
             recyclerView.addItemDecoration(dividerItemDecoration);
 
             //adapter 적용
-            keyboardAdapter = new KeyboardListFragmentAdapter(context, viewModel, fragment);
+            keyboardAdapter = new KeyboardListFragmentAdapter(context, viewModel);
             recyclerView.setAdapter(keyboardAdapter);
         }
         else
@@ -137,26 +125,26 @@ public class KeyboardListFragment extends Fragment {
         keyboardAdapter.setCustomKeyboardList(customKeyboards);//item list 적용
     }
 
+    @Override
     public void renewalList()
     {
-        Thread thread = new Thread(new Runnable() {
+        new AsyncTask<Void, Void, ObservableArrayList<CustomKeyboard>>(){
             @Override
-            public void run() {
+            protected void onPostExecute(ObservableArrayList<CustomKeyboard> customKeyboards) {
+                super.onPostExecute(customKeyboards);
 
-                viewModel.setItem_list(keyboardDB.selectCustomOf(myApplication.getUser_id()));
-
+                viewModel.setItem_list(customKeyboards);
                 if(keyboardAdapter != null)
-                {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
-                        }
-                    });
-                }
+                    keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
+
             }
-        });
-        thread.start();
+
+            @Override
+            protected ObservableArrayList<CustomKeyboard> doInBackground(Void... voids) {
+                return keyboardDB.selectCustomOf(myApplication.getUser_id());
+            }
+        }.execute();
+
     }
 
 }

@@ -26,30 +26,28 @@ import com.jun.moiso.activity.KeyboardListActivity;
 import com.jun.moiso.database.KeyboardDB;
 import com.jun.moiso.databinding.KeyboardlistItemBinding;
 import com.jun.moiso.fragment.KeyboardListFragment;
+import com.jun.moiso.interfaces.KeyboardListAdapter;
 import com.jun.moiso.model.CustomKeyboard;
 
 import com.jun.moiso.viewmodel.KeyboardListFragmentViewModel;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
-public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardListFragmentAdapter.KeyboardViewHolder<KeyboardlistItemBinding>> {
+public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardListFragmentAdapter.KeyboardViewHolder<KeyboardlistItemBinding>> implements KeyboardListAdapter {
 
     private static String TAG = "KeyboardListFragmentAdapter";
 
     private KeyboardListFragmentViewModel keyboardListFragmentViewModel;
-
-    private KeyboardListActivity activity;
-    private KeyboardListFragment fragment;
 
     private int lastPosition = 0; //item list의 변경전 크기를 나타낸다.
     private KeyboardDB keyboardDB;
     private ObservableArrayList<CustomKeyboard> customKeyboards = new ObservableArrayList<>() ;
     private Context context;
 
-    public KeyboardListFragmentAdapter(Context context, KeyboardListFragmentViewModel keyboardListFragmentViewModel, KeyboardListFragment fragment) {
+    public KeyboardListFragmentAdapter(Context context, KeyboardListFragmentViewModel keyboardListFragmentViewModel) {
         this.context = context;
         this.keyboardListFragmentViewModel = keyboardListFragmentViewModel;
-        this.fragment = fragment;
+
         keyboardDB = KeyboardDB.getInstance(context);
     }
 
@@ -74,51 +72,35 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
         final String owner_id = holder.binding().getItem().getOwner_id();
 
 
-        holder.binding().getRoot().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        holder.binding().getRoot().setOnClickListener(view -> {
+
                 Intent intent = new Intent(context, KeyboardCustomActivity.class);
                 intent.putExtra("custom_id", custom_id);
                 intent.putExtra("custom_name", custom_name);
                 intent.putExtra("owner_id", owner_id);
                 intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
-            }
         });
 
 
         //삭제 버튼 리스너
         ImageButton delete = (ImageButton) holder.itemView.findViewById(R.id.keyboarddelete_btn_item);
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-
-                //TODO : db에서 삭제 작업
+        delete.setOnClickListener(view ->  {
+                //db에서 삭제 작업
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
                 builder.setTitle(custom_name+" 삭제").setMessage("정말로 삭제하시겠습니까?");
-                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                builder.setPositiveButton("확인",  (dialogInterface, i) -> {
                         //삭제 처리
-                        keyboardDB.deleteCustom(custom_id);
+                        new Thread(() -> keyboardDB.deleteCustom(custom_id)).start();
 
                         //삭제 도중 중복 클릭 방지
                         delelteAnimation(holder.itemView, view, holder.getAdapterPosition());
-                    }
                 });
-                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
+                builder.setNegativeButton("취소", null);
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
-
-
-            }
         });
 
         createAnimation(holder.itemView,position);
@@ -126,7 +108,8 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
 
 
     //아이템 추가 애니메이션
-    private void createAnimation(View viewToAnimate, int position) {
+    @Override
+    public void createAnimation(View viewToAnimate, int position) {
         Log.i(TAG, "createAnimation");
 
         //새로 생성된 item에 한해서만 animation 실행
@@ -142,7 +125,8 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
     }
 
     //아이템 삭제 애니메이션
-    private void delelteAnimation(final View viewToAnimate, final View delete_btn, final int position) {
+    @Override
+    public void delelteAnimation(final View viewToAnimate, final View delete_btn, final int position) {
 
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha_remove);
         animation.setInterpolator(new DecelerateInterpolator());
@@ -170,12 +154,14 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
 
     }
 
-    private void lockClickable(View item, View delete_btn)
+    @Override
+    public void lockClickable(View item, View delete_btn)
     {
         item.setClickable(false);
         delete_btn.setClickable(false);
     }
-    private void unlockClickable(View item, View delete_btn)
+    @Override
+    public void unlockClickable(View item, View delete_btn)
     {
         item.setClickable(true);
         delete_btn.setClickable(true);
@@ -186,11 +172,9 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
         return customKeyboards.size();
     }
 
-    public ObservableArrayList<CustomKeyboard> getCustomKeyboards() {
-        return customKeyboards;
-    }
 
     //item list 변경 반영
+    @Override
     public void setCustomKeyboardList(ObservableArrayList<CustomKeyboard> customKeyboards) {
         //this.groupListItems = groupListItems;
         this.customKeyboards.clear();
@@ -200,6 +184,7 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
     }
 
     //아이템 변경 알림
+    @Override
     public void notifyItemChanged()
     {
         Log.d(TAG,"노티");

@@ -17,17 +17,11 @@ public class SocketLibrary {
     private static final String TAG = "SocketLibrary";
 
     private boolean connect_result, disconnect_result, reconnect_result;
-    private boolean send_result;
 
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
-    private int port ;
-    private String ip = "";
-
 
     private Socket socket;
-
-    private Context context;
 
     private final int TIME_OUT = 3000;
 
