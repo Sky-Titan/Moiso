@@ -43,7 +43,7 @@
 ## 3. 참조 이미지
 --------------------
 - UI 프로토타입 : 안드로이드
-  - <img src=./img/android_1.png width="250"> <img src=./img/android_2.png width="250"> <img src=./img/android_3.png width="250"> <img src=./img/android_4.png width="250">
+  - <img src=./img/screenshot/splash_mockup.png width="500"> <img src=./img/screenshot/connect_mockup.png width="500"> <img src=./img/screenshot/mouse_mockup.png width="500"> <img src=./img/screenshot/keyboard_mockup.png width="500">
 - 시퀀스 다이어그램
   - <img src=./img/sequence.png width="500">
 - ER 다이어그램
