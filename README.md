@@ -6,6 +6,7 @@
 ## About
 ------------------
 - **K-Hackathon :** https://onoffmix.com/event/214453
+- **Google Play :** https://play.google.com/store/apps/details?id=com.jun.moiso
 - **Developer E-mail :** er65119@naver.com
 
 
