@@ -67,6 +67,7 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
         Log.i(TAG, "onBindViewHolder");
 
         holder.binding().setItem(customKeyboards.get(position));
+
         final String custom_name = holder.binding().getItem().getCustom_name();
         final int custom_id = holder.binding().getItem().getCustom_id();
         final String owner_id = holder.binding().getItem().getOwner_id();
@@ -84,7 +85,7 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
 
 
         //삭제 버튼 리스너
-        ImageButton delete = (ImageButton) holder.itemView.findViewById(R.id.keyboarddelete_btn_item);
+        ImageButton delete = holder.itemView.findViewById(R.id.keyboarddelete_btn_item);
         delete.setOnClickListener(view ->  {
                 //db에서 삭제 작업
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -188,6 +189,7 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
     public void notifyItemChanged()
     {
         Log.d(TAG,"노티");
+
         //item이 추가 되었는지, 삭제 되었는지 파악
         if(keyboardListFragmentViewModel.isAdd())
         {
@@ -199,7 +201,7 @@ public class KeyboardListFragmentAdapter extends RecyclerView.Adapter<KeyboardLi
             notifyItemRemoved(keyboardListFragmentViewModel.getRemove_position());
             keyboardListFragmentViewModel.setRemove(false);
         }
-        else//todo : 내용 업데이트
+        else//내용 업데이트
         {
             notifyDataSetChanged();
             keyboardListFragmentViewModel.setUpdate(false);

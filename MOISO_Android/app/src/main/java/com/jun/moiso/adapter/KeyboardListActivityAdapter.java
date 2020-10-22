@@ -70,10 +70,10 @@ public class KeyboardListActivityAdapter extends RecyclerView.Adapter<KeyboardLi
         Log.i(TAG, "onBindViewHolder");
 
         holder.binding().setItem(customKeyboards.get(position));
+
         String custom_name = holder.binding().getItem().getCustom_name();
         int custom_id = holder.binding().getItem().getCustom_id();
         String owner_id = holder.binding().getItem().getOwner_id();
-
 
         holder.binding().getRoot().setOnClickListener(view ->  {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -105,10 +105,10 @@ public class KeyboardListActivityAdapter extends RecyclerView.Adapter<KeyboardLi
 
 
         //삭제 버튼 리스너
-        ImageButton delete = (ImageButton) holder.itemView.findViewById(R.id.keyboarddelete_btn_item);
+        ImageButton delete = holder.itemView.findViewById(R.id.keyboarddelete_btn_item);
         delete.setOnClickListener(view -> {
 
-                //TODO : db에서 삭제 작업
+                //db에서 삭제 작업
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
                 builder.setTitle(custom_name+" 삭제").setMessage("정말로 삭제하시겠습니까?");

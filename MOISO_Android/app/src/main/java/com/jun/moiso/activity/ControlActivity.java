@@ -40,22 +40,15 @@ public class ControlActivity extends AppCompatActivity {
         View view = getLayoutInflater().from(this).inflate(R.layout.activity_control,null);
         setContentView(view);
 
-
-
         socketLibrary = SocketLibrary.getInstance();
 
         //종료 신호 수신 콜백
-        SocketCallback waitCallback = new SocketCallback() {
-            @Override
-            public void callback(boolean result) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "연결 종료", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                });
-            }
+        SocketCallback waitCallback = result ->  {
+
+            runOnUiThread(() -> {
+                Toast.makeText(getApplicationContext(), "연결 종료", Toast.LENGTH_SHORT).show();
+                finish();
+            });
         };
         socketLibrary.waitSocketClose(waitCallback);//종료 신호 수신 대기
 
@@ -68,16 +61,11 @@ public class ControlActivity extends AppCompatActivity {
     protected void onDestroy() {
 
         //액티비티 finish 되면 자동으로 연결 종료
-        SocketCallback disconnectCallback = new SocketCallback() {
-            @Override
-            public void callback(boolean result) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "연결 종료", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+        SocketCallback disconnectCallback = result ->  {
+            runOnUiThread(()-> {
+
+                Toast.makeText(getApplicationContext(), "연결 종료", Toast.LENGTH_SHORT).show();
+            });
         };
 
         socketLibrary.disconnect(disconnectCallback);
@@ -85,16 +73,16 @@ public class ControlActivity extends AppCompatActivity {
     }
 
     //fragment 생성
-    public void createFragment()
+    private void createFragment()
     {
         mouseFragment = new MouseFragment();
         keyboardFragment = new KeyboardFragment();
     }
 
     //viewpager 및 어댑터 생성
-    public void createViewpager()
+    private void createViewpager()
     {
-        viewPager = (ViewPager2) findViewById(R.id.viewpager_control);
+        viewPager = findViewById(R.id.viewpager_control);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
         viewPagerAdapter.addFragment(mouseFragment);
         viewPagerAdapter.addFragment(keyboardFragment);
@@ -104,9 +92,9 @@ public class ControlActivity extends AppCompatActivity {
     }
 
     //tablayout - viewpager 연결
-    public void settingTabLayout()
+    private void settingTabLayout()
     {
-        tabLayout = (TabLayout)findViewById(R.id.tablayout_control);
+        tabLayout = findViewById(R.id.tablayout_control);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {

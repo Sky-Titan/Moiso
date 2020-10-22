@@ -50,8 +50,8 @@ public class SettingFragment extends Fragment {
     //마우스감도, 휠 감도 numberpicker 설정
     public void setNumberPickers()
     {
-        mouse_sensitivity = (NumberPicker) v.findViewById(R.id.mouse_sensitivity_setting);
-        mouse_wheel_sensitivity = (NumberPicker) v.findViewById(R.id.mousewheel_sensitivity_setting);
+        mouse_sensitivity = v.findViewById(R.id.mouse_sensitivity_setting);
+        mouse_wheel_sensitivity = v.findViewById(R.id.mousewheel_sensitivity_setting);
 
         mouse_sensitivity.setMinValue(1);
         mouse_sensitivity.setMaxValue(5);
@@ -62,20 +62,16 @@ public class SettingFragment extends Fragment {
         mouse_sensitivity.setValue(sf.getInt("MOUSE_SENSITIVITY",1));
         mouse_wheel_sensitivity.setValue(sf.getInt("WHEEL_SENSITIVITY",1));
 
-        mouse_sensitivity.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                editor.putInt("MOUSE_SENSITIVITY", i1);
-                editor.commit();
-            }
+        mouse_sensitivity.setOnValueChangedListener(( numberPicker, i, i1) -> {
+
+            editor.putInt("MOUSE_SENSITIVITY", i1);
+            editor.commit();
         });
 
-        mouse_wheel_sensitivity.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                editor.putInt("WHEEL_SENSITIVITY", i1);
-                editor.commit();
-            }
+        mouse_wheel_sensitivity.setOnValueChangedListener(( numberPicker, i, i1) -> {
+
+            editor.putInt("WHEEL_SENSITIVITY", i1);
+             editor.commit();
         });
 
     }

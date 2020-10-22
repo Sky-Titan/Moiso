@@ -16,9 +16,7 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".activity.KeyboardCustomActivity"></activity>
         <activity android:name=".activity.KeyboardListActivity" />
-        <activity android:name=".activity.SignUpActivity" />
         <activity android:name=".activity.ControlActivity" />
-        <activity android:name=".activity.SignInActivity" />
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

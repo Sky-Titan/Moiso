@@ -33,6 +33,11 @@ import com.jun.moiso.viewmodel.KeyboardCustomViewModel;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 public class KeyboardCustomActivity extends AppCompatActivity {
 
     private View dragView;//현재 드래그 된 view
@@ -79,7 +84,7 @@ public class KeyboardCustomActivity extends AppCompatActivity {
         //버튼들 불러오기
         getButtons(customKeyboard.getCustom_id(), (ViewGroup)parent_view);
 
-        delete_btn = (FloatingActionButton)findViewById(R.id.delete_btn_keyboardcustom);
+        delete_btn = findViewById(R.id.delete_btn_keyboardcustom);
         setChildViewDragListener(delete_btn);
 
         //autocompletelist의 drop down 버튼 list 세팅
@@ -101,40 +106,36 @@ public class KeyboardCustomActivity extends AppCompatActivity {
     //맨 처음 버튼들 불러오기
     private void getButtons(final int custom_id, final ViewGroup parent_layout)
     {
-        new AsyncTask<Void, Void, ObservableArrayList<CustomButton>>(){
+        Observable.create(e -> {
+            e.onNext(keyboardDB.selectButtonsOf(custom_id));
 
-            @Override
-            protected void onPostExecute(ObservableArrayList<CustomButton> customButtons) {
-                super.onPostExecute(customButtons);
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
 
-                for(int i=0;i<customButtons.size();i++)
-                {
-                    CustomButton customButton = customButtons.get(i);
+                    ObservableArrayList<CustomButton> customButtons = (ObservableArrayList<CustomButton>) o;
 
-                    Button btn = new Button(getApplicationContext());
-                    btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                    btn.setPadding(5,5,5,5);
-                    btn.setBackground(getDrawable(R.drawable.mouse_center_btn_layout));
-                    btn.setTag(customButton.getButton_id());
-                    btn.setText(customButton.getButton_text());
-                    btn.setX(customButton.getPos_x());
-                    btn.setY(customButton.getPos_y());
+                    for(int i=0;i<customButtons.size();i++)
+                    {
+                        CustomButton customButton = customButtons.get(i);
 
-                    setChildViewDragListener(btn);
-                    buttonArrayList.add(btn);
+                        Button btn = new Button(getApplicationContext());
+                        btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        btn.setPadding(5,5,5,5);
+                        btn.setBackground(getDrawable(R.drawable.mouse_center_btn_layout));
+                        btn.setTag(customButton.getButton_id());
+                        btn.setText(customButton.getButton_text());
+                        btn.setX(customButton.getPos_x());
+                        btn.setY(customButton.getPos_y());
 
-                    //부모 레이아웃에 추가
-                    parent_layout.addView(btn);
-                }
-            }
+                        setChildViewDragListener(btn);
+                        buttonArrayList.add(btn);
 
+                        //부모 레이아웃에 추가
+                        parent_layout.addView(btn);
+                    }
+                });
 
-            @Override
-            protected ObservableArrayList<CustomButton> doInBackground(Void... voids) {
-                ObservableArrayList<CustomButton> customButtons = keyboardDB.selectButtonsOf(custom_id);
-                return customButtons;
-            }
-        }.execute();
     }
 
 
@@ -144,52 +145,49 @@ public class KeyboardCustomActivity extends AppCompatActivity {
     }
 
     private void setAutoCompleteTextView(final ViewGroup parent_layout) {
-        autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.key_find_autocomplete_keyboardcustom);
+
+        autoCompleteTextView = findViewById(R.id.key_find_autocomplete_keyboardcustom);
         autoCompleteTextView.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, list));
-        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String button_text = ((TextView) view).getText().toString();
 
-                int button_key = findKeyCode(button_text);
+        autoCompleteTextView.setOnItemClickListener((adapterView, view, i, l) -> {
 
-                if(button_key != -1)
-                    addButton(parent_layout, button_key, button_text);
-            }
+            String button_text = ((TextView) view).getText().toString();
+
+            int button_key = findKeyCode(button_text);
+
+            if(button_key != -1)
+                addButton(parent_layout, button_key, button_text);
         });
     }
 
     private void addButton(final ViewGroup parent_layout,final int button_key,final String button_text)
     {
-        new AsyncTask<Void,Void, CustomButton>(){
+        Observable.create(e -> {
 
-            @Override
-            protected void onPostExecute(CustomButton customButton) {
-                super.onPostExecute(customButton);
+            e.onNext(keyboardDB.insertButton(button_key, button_text, 0, autoCompleteTextView.getY() + autoCompleteTextView.getHeight() * 2, customKeyboard.getCustom_id()));
 
-                //화면에 버튼 추가
-                Button btn = new Button(getApplicationContext());
-                btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                btn.setPadding(5,5,5,5);
-                btn.setBackground(getDrawable(R.drawable.mouse_center_btn_layout));
-                btn.setTag(customButton.getButton_id()+"&"+button_key);
-                btn.setText(button_text);
-                btn.setX(customButton.getPos_x());
-                btn.setY(customButton.getPos_y());
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
 
-                setChildViewDragListener(btn);
-                buttonArrayList.add(btn);
+                    CustomButton customButton = (CustomButton) o;
 
-                //부모 레이아웃에 추가
-                parent_layout.addView(btn);
-            }
+                    //화면에 버튼 추가
+                    Button btn = new Button(getApplicationContext());
+                    btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    btn.setPadding(5,5,5,5);
+                    btn.setBackground(getDrawable(R.drawable.mouse_center_btn_layout));
+                    btn.setTag(customButton.getButton_id()+"&"+button_key);
+                    btn.setText(button_text);
+                    btn.setX(customButton.getPos_x());
+                    btn.setY(customButton.getPos_y());
 
-            @Override
-            protected CustomButton doInBackground(Void...voids) {
-                CustomButton customButton = keyboardDB.insertButton(button_key, button_text, 0, autoCompleteTextView.getY()+autoCompleteTextView.getHeight() * 2, customKeyboard.getCustom_id());
-                return customButton;
-            }
-        }.execute();
+                    setChildViewDragListener(btn);
+                    buttonArrayList.add(btn);
+
+                    //부모 레이아웃에 추가
+                    parent_layout.addView(btn);
+                });
     }
 
     //키코드 찾아오기
@@ -206,54 +204,47 @@ public class KeyboardCustomActivity extends AppCompatActivity {
     //드래그할 자식뷰의 리스너 설정
     private void setChildViewDragListener(View childView)
     {
-        childView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
+        childView.setOnLongClickListener(view ->  {
 
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                    view.startDragAndDrop(null,shadowBuilder,null,View.DRAG_FLAG_GLOBAL);
-                    dragView = view;
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+            view.startDragAndDrop(null,shadowBuilder,null,View.DRAG_FLAG_GLOBAL);
+            dragView = view;
 
-                return true;
-            }
+            return true;
         });
     }
 
     //activity 드래그앤드롭 설정
     private void setDragAndDrop(final ViewGroup parentView)
     {
-        parentView.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View view, DragEvent dragEvent) {
+        parentView.setOnDragListener((view, dragEvent) -> {
 
-                switch (dragEvent.getAction())
-                {
-                    case DragEvent.ACTION_DRAG_LOCATION:
-                        dx = dragEvent.getX();
-                        dy = dragEvent.getY();
+            switch (dragEvent.getAction())
+            {
+                case DragEvent.ACTION_DRAG_LOCATION:
+                    dx = dragEvent.getX();
+                    dy = dragEvent.getY();
 
-                        //검색창 영역에 들어가면 드래그앤드롭 취소
-                        if( isInAutoCompleteTextView() )
-                            dragView.cancelDragAndDrop();
+                    //검색창 영역에 들어가면 드래그앤드롭 취소
+                    if( isInAutoCompleteTextView() )
+                        dragView.cancelDragAndDrop();
 
-                        break;
+                    break;
 
-                    case DragEvent.ACTION_DRAG_ENDED:
+                case DragEvent.ACTION_DRAG_ENDED:
 
-                        //버튼 이동
-                        if(!isInAutoCompleteTextView())
-                            moveButton();
+                    //버튼 이동
+                    if(!isInAutoCompleteTextView())
+                        moveButton();
 
-                        //휴지통에 오면 버튼 삭제 처리
-                        if(dragView.getClass() == Button.class && isInDelteBtn(dx,dy))
-                            deleteButton(parentView);
+                    //휴지통에 오면 버튼 삭제 처리
+                    if(dragView.getClass() == Button.class && isInDelteBtn(dx,dy))
+                        deleteButton(parentView);
 
-                        break;
-                }
-
-
-                return true;
+                    break;
             }
+
+            return true;
         });
     }
 
@@ -307,8 +298,6 @@ public class KeyboardCustomActivity extends AppCompatActivity {
             return true;
         return false;
     }
-
-
 
 
 }
