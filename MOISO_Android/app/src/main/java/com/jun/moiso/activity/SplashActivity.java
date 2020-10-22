@@ -27,14 +27,14 @@ public class SplashActivity extends AppCompatActivity {
 
         removeActionBar();
 
-        ImageView mosio_icon = (ImageView) findViewById(R.id.moiso_ic_splash);
+        ImageView mosio_icon = findViewById(R.id.moiso_ic_splash);
         doAnimation(mosio_icon,R.anim.alpha_create);
 
 
     }
 
     //권한
-    public void checkSelfPermission() {
+    private void checkSelfPermission() {
         String temp = "";
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
@@ -58,7 +58,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
     //상,하단 바 제거
-    public void removeActionBar()
+    private void removeActionBar()
     {
         int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
         int newUiOptions = uiOptions;
@@ -69,7 +69,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
     //애니메이션 실행
-    public void doAnimation(View v, int anim_id)
+    private void doAnimation(View v, int anim_id)
     {
         Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),anim_id);
 
@@ -95,7 +95,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     //로그인 액티비티 호출
-    public void callMainActivity()
+    private void callMainActivity()
     {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

@@ -26,6 +26,10 @@ import com.jun.moiso.interfaces.KeyboardList;
 import com.jun.moiso.model.CustomKeyboard;
 import com.jun.moiso.viewmodel.KeyboardListActivityViewModel;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 public class KeyboardListActivity extends AppCompatActivity implements KeyboardList {
 
     private static KeyboardListActivityAdapter keyboardAdapter;
@@ -87,23 +91,18 @@ public class KeyboardListActivity extends AppCompatActivity implements KeyboardL
     @Override
     public void renewalList()
     {
-        new AsyncTask<Void, Void, ObservableArrayList<CustomKeyboard>>(){
-            @Override
-            protected void onPostExecute(ObservableArrayList<CustomKeyboard> customKeyboards) {
-                super.onPostExecute(customKeyboards);
+        Observable.create(e -> {
+            e.onNext(keyboardDB.selectCustomOf(myApplication.getUser_id()));
 
-                viewModel.setItem_list(customKeyboards);
-                if(keyboardAdapter != null)
-                    keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
+                    ObservableArrayList<CustomKeyboard> customKeyboards = (ObservableArrayList<CustomKeyboard>) o;
 
-            }
-
-            @Override
-            protected ObservableArrayList<CustomKeyboard> doInBackground(Void... voids) {
-                return keyboardDB.selectCustomOf(myApplication.getUser_id());
-            }
-        }.execute();
-
+                    viewModel.setItem_list(customKeyboards);
+                    if(keyboardAdapter != null)
+                        keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
+                });
     }
 
     //커스텀 키보드 추가 리스너
@@ -111,7 +110,7 @@ public class KeyboardListActivity extends AppCompatActivity implements KeyboardL
     {
         //키보드 커스텀 이름 이력 후 생성하는 액티비티
         View dialogView = getLayoutInflater().inflate(R.layout.create_dialog, null);
-        final EditText editText = (EditText) dialogView.findViewById(R.id.edittext_dialog);
+        final EditText editText = dialogView.findViewById(R.id.edittext_dialog);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView);

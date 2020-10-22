@@ -35,7 +35,6 @@ public class ConnectFragment extends Fragment {
 
     private static View v;
 
-    private static Context context;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,41 +52,28 @@ public class ConnectFragment extends Fragment {
         sf = getActivity().getSharedPreferences("IP_INFO", MODE_PRIVATE);
         editor = sf.edit();
 
-        Button connect = (Button)v.findViewById(R.id.connect_btn);
-        connect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        Button connect = v.findViewById(R.id.connect_btn);
+        connect.setOnClickListener( view -> {
                 //PC 앱과 소켓 연결 작업 후 ControlActivity로 이동
-                SocketCallback connectCallBack = new SocketCallback() {
-                    @Override
-                    public void callback(final boolean result) {
-
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(result)
-                                {
-                                    Toast.makeText(getContext(), "연결 완료", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getContext(), ControlActivity.class);
-                                    startActivity(intent);
-                                }
-                                else
-                                {
-                                    Toast.makeText(getContext(), "연결 실패", Toast.LENGTH_SHORT).show();
-                                }
-
+                SocketCallback connectCallBack = result ->  {
+                        getActivity().runOnUiThread(() ->  {
+                            if(result)
+                            {
+                                Toast.makeText(getContext(), "연결 완료", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getContext(), ControlActivity.class);
+                                startActivity(intent);
                             }
+                            else
+                                Toast.makeText(getContext(), "연결 실패", Toast.LENGTH_SHORT).show();
                         });
-                    }
                 };
 
                 //연결 시작
                 socketLibrary.connect(ip_edittext.getText().toString(), Integer.parseInt(port_edittext.getText().toString()), group_name, user_name, connectCallBack);
-            }
         });
 
-        //TODO : 나중에 그룹별로 서버에서 저장된 IP주소 불러와야함
-        ip_edittext = (EditText) v.findViewById(R.id.ip_edittext);
+        //ip주소 입력
+        ip_edittext = v.findViewById(R.id.ip_edittext);
         ip_edittext.setText(sf.getString("IP",""));
         ip_edittext.addTextChangedListener(new TextWatcher() {
             @Override
@@ -108,7 +94,8 @@ public class ConnectFragment extends Fragment {
             }
         });
 
-        port_edittext = (EditText) v.findViewById(R.id.port_edittext);
+        //포트 입력
+        port_edittext = v.findViewById(R.id.port_edittext);
         port_edittext.setText(sf.getString("PORT","5001"));
         port_edittext.addTextChangedListener(new TextWatcher() {
             @Override

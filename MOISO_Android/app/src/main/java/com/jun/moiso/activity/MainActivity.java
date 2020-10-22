@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //프래그먼트 생성
-    public void setFragments()
+    private void setFragments()
     {
         connectFragment = new ConnectFragment();
         keyboardListFragment = new KeyboardListFragment();
@@ -46,14 +46,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //viewpager 생성
-    public void setViewPager()
+    private void setViewPager()
     {
-        viewPager = (ViewPager2) findViewById(R.id.viewpager_main);
+        viewPager = findViewById(R.id.viewpager_main);
         viewPager.setUserInputEnabled(false);//user 스크롤 막음
     }
 
     //viewpager adapter 생성
-    public void setViewPagerAdapter()
+    private void setViewPagerAdapter()
     {
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),getLifecycle());
         viewPagerAdapter.addFragment(connectFragment);
@@ -64,27 +64,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //bottomnavigation view 생성 및 세팅
-    public void setBottomNavigationView()
+    private void setBottomNavigationView()
     {
-        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomnavigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        bottomNavigationView = findViewById(R.id.bottomnavigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item ->  {
 
-                switch (item.getItemId())
-                {
-                    case R.id.navigation_connect:
-                        viewPager.setCurrentItem(0);
-                        return true;
-                    case R.id.navigation_keyboard:
-                        viewPager.setCurrentItem(1);
-                        return true;
-                    case R.id.navigation_setting :
-                        viewPager.setCurrentItem(2);
-                        return true;
-                }
-                return false;
+            switch (item.getItemId())
+            {
+                case R.id.navigation_connect:
+                    viewPager.setCurrentItem(0);
+                    return true;
+                case R.id.navigation_keyboard:
+                    viewPager.setCurrentItem(1);
+                    return true;
+                case R.id.navigation_setting :
+                    viewPager.setCurrentItem(2);
+                    return true;
             }
+            return false;
         });
     }
 }

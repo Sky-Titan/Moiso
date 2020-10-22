@@ -35,6 +35,10 @@ import com.jun.moiso.viewmodel.KeyboardListFragmentViewModel;
 import java.util.Arrays;
 import java.util.Collections;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 
 public class KeyboardListFragment extends Fragment implements KeyboardList {
 
@@ -71,12 +75,12 @@ public class KeyboardListFragment extends Fragment implements KeyboardList {
         myApplication = (MyApplication)getActivity().getApplication();
         keyboardDB = KeyboardDB.getInstance(getContext());
 
-        ImageButton addCustom_btn = (ImageButton) v.findViewById(R.id.keyboardcustom_add_btn_keyboardlist_fragment);
+        ImageButton addCustom_btn = v.findViewById(R.id.keyboardcustom_add_btn_keyboardlist_fragment);
         addCustom_btn.setOnClickListener( view -> {
 
                 //키보드 커스텀 이름 이력 후 생성하는 액티비티
                 View dialogView = getLayoutInflater().inflate(R.layout.create_dialog, null);
-                final EditText editText = (EditText) dialogView.findViewById(R.id.edittext_dialog);
+                final EditText editText = dialogView.findViewById(R.id.edittext_dialog);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setView(dialogView);
@@ -128,23 +132,20 @@ public class KeyboardListFragment extends Fragment implements KeyboardList {
     @Override
     public void renewalList()
     {
-        new AsyncTask<Void, Void, ObservableArrayList<CustomKeyboard>>(){
-            @Override
-            protected void onPostExecute(ObservableArrayList<CustomKeyboard> customKeyboards) {
-                super.onPostExecute(customKeyboards);
+        Observable.create(e -> {
 
-                viewModel.setItem_list(customKeyboards);
-                if(keyboardAdapter != null)
-                    keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
+            e.onNext(keyboardDB.selectCustomOf(myApplication.getUser_id()));
 
-            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
 
-            @Override
-            protected ObservableArrayList<CustomKeyboard> doInBackground(Void... voids) {
-                return keyboardDB.selectCustomOf(myApplication.getUser_id());
-            }
-        }.execute();
+                    ObservableArrayList<CustomKeyboard> customKeyboards = (ObservableArrayList<CustomKeyboard>)o;
 
+                    viewModel.setItem_list(customKeyboards);
+                    if (keyboardAdapter != null)
+                        keyboardAdapter.setCustomKeyboardList(viewModel.getItem_list());
+                });
     }
 
 }

@@ -72,78 +72,60 @@ public class SocketLibrary {
     //서버로 메시지 송신
     private void sendToSeverMsg(final String msg)
     {
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-
-               // Log.i(TAG,"Send Event "+msg);
-                try
-                {
-                    outputStream = new ObjectOutputStream(socket.getOutputStream());
-                    outputStream.writeObject(msg);
-                    outputStream.flush();
-
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            // Log.i(TAG,"Send Event "+msg);
+            try
+            {
+                outputStream = new ObjectOutputStream(socket.getOutputStream());
+                outputStream.writeObject(msg);
+                outputStream.flush();
             }
-        });
-        thread.start();
-    }
-
-    //재연결
-    public void reconnect(String ip, int port, String group_name, String user_name, SocketCallback reconnectCallback)
-    {
-        //TODO : 재연결 (연결해제 -> 연결)
-
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     //연결해제
     public void disconnect(final SocketCallback disconnectCallBack)
     {
         disconnect_result = false;
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(() -> {
 
-                Log.d(TAG,"disconnect");
+            Log.d(TAG,"disconnect");
 
-                try {
-                    socket = getSocket();
+            try {
+                socket = getSocket();
 
-                    outputStream = new ObjectOutputStream(socket.getOutputStream());
-                    outputStream.writeObject("FINISH");
-                    outputStream.flush();
+                outputStream = new ObjectOutputStream(socket.getOutputStream());
+                outputStream.writeObject("FINISH");
+                outputStream.flush();
 
-                    inputStream = new ObjectInputStream(socket.getInputStream());
-                    Object object = inputStream.readObject();
+                inputStream = new ObjectInputStream(socket.getInputStream());
+                Object object = inputStream.readObject();
 
-                    //서버 메시지 수신
-                    Log.i(TAG, "Socket Disconnect ["+object.toString()+"]");
+                //서버 메시지 수신
+                Log.i(TAG, "Socket Disconnect ["+object.toString()+"]");
 
-                    socket.close();
-                    socket = null;
+                socket.close();
+                socket = null;
 
-                    if(socket == null || socket.isClosed())
-                        disconnect_result = true;
-                    else
-                        disconnect_result = false;
-
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                    socket = null;
+                if(socket == null || socket.isClosed())
+                    disconnect_result = true;
+                else
                     disconnect_result = false;
-                }
 
-                disconnectCallBack.callback(disconnect_result);
             }
-        });
-        thread.start();
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                socket = null;
+                disconnect_result = false;
+            }
+
+            disconnectCallBack.callback(disconnect_result);
+        }).start();
 
     }
 
@@ -154,48 +136,41 @@ public class SocketLibrary {
 
         final SocketAddress socketAddress = new InetSocketAddress(ip,port);
 
-        Thread thread = new Thread(new Runnable() {
+        new Thread(() -> {
 
-            @Override
-            public void run() {
+            Log.i(TAG,"Socket Connect try");
+            try
+            {
+                socket = getSocket();//소켓 염
 
-                Log.i(TAG,"Socket Connect try");
-                try
-                {
-                    socket = getSocket();//소켓 염
+                socket.connect(socketAddress, TIME_OUT);
+                socket.setKeepAlive(true);//소켓 연결 알기 위해서
 
-                    socket.connect(socketAddress, TIME_OUT);
-                    socket.setKeepAlive(true);//소켓 연결 알기 위해서
+                outputStream = new ObjectOutputStream(socket.getOutputStream());
+                outputStream.writeObject("START&"+group_name+"&"+user_name);
+                outputStream.flush();
 
-                    outputStream = new ObjectOutputStream(socket.getOutputStream());
-                    outputStream.writeObject("START&"+group_name+"&"+user_name);
-                    outputStream.flush();
+                inputStream = new ObjectInputStream(socket.getInputStream());
 
-                    inputStream = new ObjectInputStream(socket.getInputStream());
+                //메시지 수신
+                Object msg_object = inputStream.readObject();
+                Log.i(TAG, "Socket Connect ["+msg_object.toString()+"]");
 
-                    //메시지 수신
-                    Object msg_object = inputStream.readObject();
-                    Log.i(TAG, "Socket Connect ["+msg_object.toString()+"]");
-
-                    //TODO : 연결 성공 메시지 혹은 실패 메시지
-                    if(msg_object.toString().equals("CONNECT_COMPLETE"))
-                        connect_result = true;
-                    else
-                        connect_result = false;
-
-
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                    socket = null;
+                //연결 성공 메시지 혹은 실패 메시지
+                if(msg_object.toString().equals("CONNECT_COMPLETE"))
+                    connect_result = true;
+                else
                     connect_result = false;
-
-                }
-                connectCallBack.callback(connect_result);
             }
-        });
-        thread.start();
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                socket = null;
+                connect_result = false;
+
+            }
+            connectCallBack.callback(connect_result);
+        }).start();
 
 
     }
@@ -203,35 +178,34 @@ public class SocketLibrary {
     //서버 측에서 먼저 socket 연결을 종료할 시 -> 메시지를 받아서 소켓 연결 및 ControlActivity 종료
     public void waitSocketClose(final SocketCallback socketCallback)
     {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean isFinish = false;
-                try
-                {
-                    while (!isFinish)
-                    {
-                        inputStream = new ObjectInputStream(socket.getInputStream());
+        new Thread(() -> {
 
-                        //메시지 수신
-                        Object msg_object = inputStream.readObject();
-                        if(msg_object.toString().equals("CONNECT_FINISH"))
-                        {
-                            socket.close();
-                            socket = null;
-                            isFinish = true;
-                        }
+            boolean isFinish = false;
+
+            try
+            {
+                while (!isFinish)
+                {
+                    inputStream = new ObjectInputStream(socket.getInputStream());
+
+                    //메시지 수신
+                    Object msg_object = inputStream.readObject();
+
+                    if(msg_object.toString().equals("CONNECT_FINISH"))
+                    {
+                        socket.close();
+                        socket = null;
+                        isFinish = true;
                     }
                 }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                    socket = null;
-                }
-                socketCallback.callback(isFinish);
             }
-        });
-        thread.start();
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                socket = null;
+            }
+            socketCallback.callback(isFinish);
+        }).start();
     }
 
     private Socket getSocket(String ip, int port) throws  Exception

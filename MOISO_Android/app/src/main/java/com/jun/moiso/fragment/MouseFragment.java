@@ -31,7 +31,6 @@ public class MouseFragment extends Fragment implements View.OnTouchListener {
     private static final String TAG = "MouseFragment";
 
     private SocketLibrary socketLibrary;
-    private MyApplication myApplication;
 
     private View v;
 
@@ -58,21 +57,20 @@ public class MouseFragment extends Fragment implements View.OnTouchListener {
 
 
         socketLibrary = SocketLibrary.getInstance();
-        myApplication = (MyApplication) getActivity().getApplication();
 
-        pad_layout_mouse = (LinearLayout) v.findViewById(R.id.pad_layout_mouse);
+        pad_layout_mouse = v.findViewById(R.id.pad_layout_mouse);
         pad_layout_mouse.setOnTouchListener(this);
 
-        left_btn = (Button) v.findViewById(R.id.left_button_mouse);
-        wheel_btn = (Button) v.findViewById(R.id.wheel_button_mouse);
-        right_btn = (Button) v.findViewById(R.id.right_button_mouse);
+        left_btn = v.findViewById(R.id.left_button_mouse);
+        wheel_btn = v.findViewById(R.id.wheel_button_mouse);
+        right_btn = v.findViewById(R.id.right_button_mouse);
         left_btn.setOnTouchListener(this);
         wheel_btn.setOnTouchListener(this);
         right_btn.setOnTouchListener(this);
 
-        wheel_up_btn = (Button) v.findViewById(R.id.wheel_up_mouse);
-        wheel_bar_btn = (Button) v.findViewById(R.id.wheel_bar_mouse);
-        wheel_down_btn = (Button) v.findViewById(R.id.wheel_down_mouse);
+        wheel_up_btn = v.findViewById(R.id.wheel_up_mouse);
+        wheel_bar_btn = v.findViewById(R.id.wheel_bar_mouse);
+        wheel_down_btn = v.findViewById(R.id.wheel_down_mouse);
         wheel_up_btn.setOnTouchListener(this);
         wheel_bar_btn.setOnTouchListener(this);
         wheel_down_btn.setOnTouchListener(this);

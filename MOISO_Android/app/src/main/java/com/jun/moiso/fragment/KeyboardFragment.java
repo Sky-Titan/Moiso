@@ -32,6 +32,10 @@ import com.jun.moiso.socket.SocketLibrary;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 public class KeyboardFragment extends Fragment {
 
     private View v;
@@ -68,13 +72,11 @@ public class KeyboardFragment extends Fragment {
         keyboardDB = KeyboardDB.getInstance(getContext());
 
         //커스텀 불러오기 버튼
-        callCustom_btn = (FloatingActionButton) v.findViewById(R.id.call_custom_fab_keyboardfragment);
-        callCustom_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), KeyboardListActivity.class);
-                startActivityForResult(intent, 0);
-            }
+        callCustom_btn = v.findViewById(R.id.call_custom_fab_keyboardfragment);
+        callCustom_btn.setOnClickListener(view -> {
+
+            Intent intent = new Intent(getContext(), KeyboardListActivity.class);
+            startActivityForResult(intent, 0);
         });
         setChildViewDragListener(callCustom_btn);
 
@@ -101,6 +103,7 @@ public class KeyboardFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //키보드 리스트 띄운 후 선택해서 키보드 커스텀 가져옴
         if(requestCode == 0)
         {
             if(resultCode == Activity.RESULT_OK)
@@ -126,67 +129,57 @@ public class KeyboardFragment extends Fragment {
         parent_layout.addView(callCustom_btn);
         buttonArrayList.clear();
 
-        new AsyncTask<Void, Void, ObservableArrayList<CustomButton>>()
-        {
-            @Override
-            protected void onPostExecute(ObservableArrayList<CustomButton> customButtons) {
-                super.onPostExecute(customButtons);
+        Observable.create(e -> {
+            e.onNext(keyboardDB.selectButtonsOf(custom_id));
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
+                    ObservableArrayList<CustomButton> customButtons = (ObservableArrayList<CustomButton>) o;
 
-                for(int i=0;i<customButtons.size();i++)
-                {
-                    final CustomButton customButton = customButtons.get(i);
+                    for(int i=0;i<customButtons.size();i++) {
+                        final CustomButton customButton = customButtons.get(i);
 
-                    Button btn = new Button(getContext());
-                    btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                    btn.setPadding(5,5,5,5);
-                    btn.setBackground(getActivity().getDrawable(R.drawable.mouse_center_btn_layout));
-                    btn.setTag(customButton.getButton_id()+"&"+customButton.getButton_key());
-                    btn.setText(customButton.getButton_text());
-                    btn.setX(customButton.getPos_x());
-                    btn.setY(customButton.getPos_y());
+                        Button btn = new Button(getContext());
+                        btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        btn.setPadding(5, 5, 5, 5);
+                        btn.setBackground(getActivity().getDrawable(R.drawable.mouse_center_btn_layout));
+                        btn.setTag(customButton.getButton_id() + "&" + customButton.getButton_key());
+                        btn.setText(customButton.getButton_text());
+                        btn.setX(customButton.getPos_x());
+                        btn.setY(customButton.getPos_y());
 
-                    btn.setOnTouchListener( (view, motionEvent) -> {
+                        btn.setOnTouchListener((view, motionEvent) -> {
 
                             int key_code = parseKeyCode(btn.getTag().toString());
                             String motion = "";
 
-                            switch (motionEvent.getAction())
-                            {
-                                case MotionEvent.ACTION_UP :
+                            switch (motionEvent.getAction()) {
+                                case MotionEvent.ACTION_UP:
                                     motion = "RELEASE";
                                     btn.setPressed(false);
                                     //송신 결과 리턴
                                     socketLibrary.sendKeyboardEvent(key_code, motion);
-                                    Log.i(TAG,"Keyboard "+key_code+" "+motion+" Send Complete");
+                                    Log.i(TAG, "Keyboard " + key_code + " " + motion + " Send Complete");
                                     break;
 
-                                case MotionEvent.ACTION_DOWN :
+                                case MotionEvent.ACTION_DOWN:
                                     motion = "PRESS";
                                     btn.setPressed(true);
                                     //송신 결과 리턴
                                     socketLibrary.sendKeyboardEvent(key_code, motion);
-                                    Log.i(TAG,"Keyboard "+key_code+" "+motion+" Send Complete");
+                                    Log.i(TAG, "Keyboard " + key_code + " " + motion + " Send Complete");
                                     break;
                             }
 
                             return true;
-                    });
+                        });
 
-                    buttonArrayList.add(btn);
+                        buttonArrayList.add(btn);
 
-                    //부모 레이아웃에 추가
-                    parent_layout.addView(btn);
-                }
-            }
-
-            @Override
-            protected ObservableArrayList<CustomButton> doInBackground(Void... voids) {
-
-                ObservableArrayList<CustomButton> customButtons = keyboardDB.selectButtonsOf(custom_id);
-                return customButtons;
-            }
-        }.execute();
-
+                        //부모 레이아웃에 추가
+                        parent_layout.addView(btn);
+                    }
+                });
     }
 
     private int parseKeyCode(String tag)
@@ -195,7 +188,6 @@ public class KeyboardFragment extends Fragment {
         strtok.nextToken();
         return Integer.parseInt(strtok.nextToken());
     }
-
 
     //키코드 찾아오기
     private int findKeyCode(String button_text)
@@ -211,46 +203,41 @@ public class KeyboardFragment extends Fragment {
     //activity 드래그앤드롭 설정
     private void setDragAndDrop(final ViewGroup parentView)
     {
-        parentView.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View view, DragEvent dragEvent) {
+        parentView.setOnDragListener((view, dragEvent) -> {
 
-                    switch (dragEvent.getAction())
-                    {
-                        case DragEvent.ACTION_DRAG_LOCATION:
-                            dx = dragEvent.getX();
-                            dy = dragEvent.getY();
+            switch (dragEvent.getAction())
+            {
 
-                            Log.d(TAG,call_custom_move_limit+"");
+                case DragEvent.ACTION_DRAG_LOCATION:
+                    dx = dragEvent.getX();
+                    dy = dragEvent.getY();
 
-                            if(dy <= call_custom_move_limit)
-                                dragView.cancelDragAndDrop();
-                            break;
+                    Log.d(TAG,call_custom_move_limit+"");
 
-                        case DragEvent.ACTION_DRAG_ENDED:
-                            if(dy > call_custom_move_limit)
-                                moveButton();
-                            break;
-                    }
+                    if(dy <= call_custom_move_limit)
+                        dragView.cancelDragAndDrop();
+                    break;
 
-                return true;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    if(dy > call_custom_move_limit)
+                        moveButton();
+                    break;
             }
+
+            return true;
         });
     }
 
     //드래그할 자식뷰의 리스너 설정
     private void setChildViewDragListener(View childView)
     {
-        childView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
+        childView.setOnLongClickListener(view -> {
 
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                view.startDragAndDrop(null,shadowBuilder,null,View.DRAG_FLAG_GLOBAL);
-                dragView = view;
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+            view.startDragAndDrop(null,shadowBuilder,null, View.DRAG_FLAG_GLOBAL);
+            dragView = view;
 
-                return true;
-            }
+            return true;
         });
     }
 
@@ -260,4 +247,10 @@ public class KeyboardFragment extends Fragment {
         dragView.setX(dx - dragView.getWidth() / 2);
         dragView.setY(dy - dragView.getHeight() / 2);
     }
+
+
+
+
+
+
 }
