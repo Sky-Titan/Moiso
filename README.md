@@ -6,6 +6,8 @@
 ## About
 ------------------
 - **K-Hackathon :** https://onoffmix.com/event/214453
+- **Google Play :** https://play.google.com/store/apps/details?id=com.jun.moiso
+- **PC App Download :** https://skytitan.tistory.com/58?category=940117 
 - **Developer E-mail :** er65119@naver.com
 
 
