@@ -36,7 +36,7 @@ public interface MyDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertCustomButton(CustomButton customButton) throws IllegalStateException;
 
-    @Query("UPDATE CustomButton SET pos_x = 1, pos_y = pos_y WHERE button_id = :button_id")
+    @Query("UPDATE CustomButton SET pos_x = :pos_x, pos_y = :pos_y WHERE button_id = :button_id")
     public void updateButtonPosition(int button_id, float pos_x, float pos_y);
 
 

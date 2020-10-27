@@ -5,13 +5,14 @@ import android.app.Application;
 import com.jun.moiso.model.KeyButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MyApplication extends Application {
 
     //TODO : 현재 로그인 된 USER ID
     private String user_id="test";
     private ArrayList<String> list = new ArrayList<>();
-    private ArrayList<KeyButton> keyButtons = new ArrayList<>();
+    private HashMap<String, Integer> keyButtons = new HashMap<>();
 
     private int mouse_sensitivity=1;
 
@@ -29,11 +30,11 @@ public class MyApplication extends Application {
         this.list = list;
     }
 
-    public ArrayList<KeyButton> getKeyButtons() {
+    public HashMap<String, Integer> getKeyButtons() {
         return keyButtons;
     }
 
-    public void setKeyButtons(ArrayList<KeyButton> keyButtons) {
+    public void setKeyButtons(HashMap<String, Integer> keyButtons) {
         this.keyButtons = keyButtons;
     }
 
@@ -56,149 +57,149 @@ public class MyApplication extends Application {
     private void settingList()
     {
         list.add("ESC");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 27));
+        keyButtons.putIfAbsent(list.get(list.size()-1), 27);
 
         //F1 ~ F12
         for(int i = 1; i<=12;i++)
         {
             list.add("F"+i);
-            keyButtons.add(new KeyButton(list.get(list.size()-1), i+111));
+            keyButtons.putIfAbsent(list.get(list.size() - 1), i+111);
         }
 
         //숫자 1~9
         for(int i = 0; i<=9;i++)
         {
             list.add("NUMBER"+i);
-            keyButtons.add(new KeyButton(list.get(list.size()-1), i+48));
+            keyButtons.putIfAbsent(list.get(list.size() - 1), i+48);
         }
 
         list.add("Print Screen");
-        keyButtons.add(new KeyButton(list.get(list.size()-1),154));
+        keyButtons.putIfAbsent(list.get(list.size() - 1),154);
 
         list.add("Scroll Lock");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 145));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 145);
 
         list.add("Pause");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 19));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 19);
 
         list.add("Insert");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 155));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 155);
 
         list.add("Home");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 36));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 36);
 
         list.add("Page Up");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 33));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 33);
 
         list.add("Page Down");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 34));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 34);
 
         list.add("Delete");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 127));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 127);
 
         list.add("End");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 35));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 35);
 
         list.add("NumLock");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 144));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 144);
 
         list.add("/");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 47));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 47);
 
         list.add("*");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 106));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 106);
 
         list.add("-");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 109));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 109);
 
         list.add("+");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 107));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 107);
 
         //숫자패드 1~9
         for(int i = 0; i<=9;i++)
         {
             list.add("NUMBER_PAD"+i);
-            keyButtons.add(new KeyButton("NUMBER_PAD"+i, 96));
+            keyButtons.putIfAbsent("NUMBER_PAD"+i, 96);
         }
 
         list.add("Alt");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 18));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 18);
 
         list.add("Ctrl");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 17));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 17);
 
         list.add("Shift");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 16));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 16);
 
         list.add("Enter");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 10));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 10);
 
         list.add("Space");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 32));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 32);
 
         list.add("Back Space");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 8));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 8);
 
         list.add("Tab");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 9));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 9);
 
         list.add("Caps Lock");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 20));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 20);
 
         list.add("`");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 192));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 192);
 
         list.add(";");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 59));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 59);
 
         list.add("'");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 222));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 222);
 
         list.add("[");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 91));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 91);
 
         list.add("]");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 93));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 93);
 
         list.add(",");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 44));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 44);
 
         list.add(".");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 46));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 46);
 
         list.add("=");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 61));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 61);
 
         list.add("\\");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 92));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 92);
 
         list.add("Windows");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 524));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 524);
 
         list.add("UP");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 38));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 38);
 
         list.add("DOWN");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 40));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 40);
 
         list.add("LEFT");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 37));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 37);
 
         list.add("RIGHT");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 39));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 39);
 
 
         list.add("한영");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 21));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 21);
 
         list.add("한자");
-        keyButtons.add(new KeyButton(list.get(list.size()-1), 25));
+        keyButtons.putIfAbsent(list.get(list.size() - 1), 25);
 
         //알파벳
         for(int i=65;i<=90;i++)
         {
             list.add(""+(char)i);
-            keyButtons.add(new KeyButton(""+(char)i, i));
+            keyButtons.putIfAbsent(""+(char)i, i);
         }
     }
 }

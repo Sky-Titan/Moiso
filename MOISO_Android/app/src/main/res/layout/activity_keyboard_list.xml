@@ -1,61 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <data>
-        <variable
-            name="viewModel"
-            type="com.jun.moiso.viewmodel.KeyboardListActivityViewModel" />
-    </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingHorizontal="10dp"
+    tools:context=".activity.KeyboardListActivity">
+
+    <TextView
+        android:id="@+id/keyboardlist_text"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:paddingHorizontal="10dp"
-        tools:context=".activity.KeyboardListActivity">
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue_for_splash"
+        android:textStyle="bold"
+        android:text="키보드 커스텀" />
 
-        <TextView
-            android:id="@+id/keyboardlist_text"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue_for_splash"
-            android:textStyle="bold"
-            android:text="키보드 커스텀" />
+    <View
+        android:id="@+id/line_view"
+        android:background="@color/blue_for_splash"
+        app:layout_constraintTop_toBottomOf="@+id/keyboardlist_text"
+        android:layout_marginVertical="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"></View>
 
-        <View
-            android:id="@+id/line_view"
-            android:background="@color/blue_for_splash"
-            app:layout_constraintTop_toBottomOf="@+id/keyboardlist_text"
-            android:layout_marginVertical="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"></View>
+    <ImageButton
+        android:id="@+id/keyboardcustom_add_btn_keyboardlist_activity"
+        android:layout_marginVertical="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:onClick="addCustomOnClick"
+        android:src="@drawable/ic_baseline_add_box_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line_view"></ImageButton>
 
-        <ImageButton
-            android:id="@+id/keyboardcustom_add_btn_keyboardlist_activity"
-            android:layout_marginVertical="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:onClick="addCustomOnClick"
-            android:src="@drawable/ic_baseline_add_box_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/line_view"></ImageButton>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_keyboardlist_activity"
-            items_activity="@{viewModel.item_list}"
-            app:layout_constrainedHeight="true"
-            app:flow_verticalBias="0"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@+id/keyboardcustom_add_btn_keyboardlist_activity"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            ></androidx.recyclerview.widget.RecyclerView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</layout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_keyboardlist_activity"
+        app:layout_constrainedHeight="true"
+        app:flow_verticalBias="0"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@+id/keyboardcustom_add_btn_keyboardlist_activity"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        ></androidx.recyclerview.widget.RecyclerView>
+</androidx.constraintlayout.widget.ConstraintLayout>
