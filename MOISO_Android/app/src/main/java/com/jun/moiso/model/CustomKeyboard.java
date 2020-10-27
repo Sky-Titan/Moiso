@@ -2,57 +2,29 @@ package com.jun.moiso.model;
 
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.ArrayList;
 
+@Entity
 public class CustomKeyboard {
 
-    private int custom_id;
-    private String custom_name;
-    private String owner_id;
-    private ArrayList<Button> buttons = new ArrayList<>();
+    @PrimaryKey (autoGenerate = true)
+    @NonNull
+    public int custom_id;
+    public String custom_name;
 
     public CustomKeyboard()
     {
 
     }
 
-    public CustomKeyboard(int custom_id, String custom_name, String owner_id) {
+    public CustomKeyboard(int custom_id, String custom_name) {
         this.custom_id = custom_id;
         this.custom_name = custom_name;
-        this.owner_id = owner_id;
     }
 
-    public int getCustom_id() {
-        return custom_id;
-    }
 
-    public void setCustom_id(int custom_id) {
-        this.custom_id = custom_id;
-    }
-
-    public String getCustom_name() {
-        return custom_name;
-    }
-
-    public void setCustom_name(String custom_name) {
-        this.custom_name = custom_name;
-    }
-
-    public String getOwner_id() {
-        return owner_id;
-    }
-
-    public void setOwner_id(String owner_id) {
-        this.owner_id = owner_id;
-    }
-
-    public void addButton(Button button)
-    {
-        buttons.add(button);
-    }
-
-    public Button getButton(int index)
-    {
-        return buttons.get(index);
-    }
 }

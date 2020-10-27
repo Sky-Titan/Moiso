@@ -1,6 +1,8 @@
 package com.jun.moiso.model;
 
+
 public class KeyButton {
+
 
     private String key_name;
     private int key_code;

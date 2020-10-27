@@ -38,7 +38,7 @@ public class KeyboardDB {
         db.execSQL("CREATE TABLE IF NOT EXISTS Button (button_id INTEGER PRIMARY KEY AUTOINCREMENT, button_key INTEGER, button_text TEXT  ," +
                 " pos_x FLOAT, pos_y FLOAT, custom_id INTEGER, FOREIGN KEY (custom_id) REFERENCES Custom(custom_id) )");
     }
-
+/*
     //커스텀 키보드 생성
     public CustomKeyboard insertCustom(String custom_name, String owner_id)
     {
@@ -146,5 +146,5 @@ public class KeyboardDB {
         cursor.close();
         return buttons;
     }
-
+*/
 }

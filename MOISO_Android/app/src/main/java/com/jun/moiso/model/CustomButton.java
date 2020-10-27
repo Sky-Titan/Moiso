@@ -1,14 +1,26 @@
 package com.jun.moiso.model;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class CustomButton {
 
-    private int button_id;
-    private int button_key;
+    @PrimaryKey(autoGenerate = true)
+    public int button_id;
 
-    private String button_text;
+    public int button_key;
 
-    private float pos_x, pos_y;
-    private int custom_id;
+    public String button_text;
+
+    public float pos_x, pos_y;
+
+    @ForeignKey(entity = CustomKeyboard.class, parentColumns = "custom_id", childColumns = "custom_id", onDelete = ForeignKey.CASCADE)
+    public int custom_id;
 
     public CustomButton() {
     }
@@ -22,51 +34,26 @@ public class CustomButton {
         this.custom_id = custom_id;
     }
 
-    public String getButton_text() {
-        return button_text;
-    }
-
-    public void setButton_text(String button_text) {
+    public CustomButton(int button_key, String button_text , float pos_x, float pos_y, int custom_id) {
+        this.button_key = button_key;
         this.button_text = button_text;
-    }
-
-    public int getButton_id() {
-        return button_id;
-    }
-
-    public void setButton_id(int button_id) {
-        this.button_id = button_id;
-    }
-
-    public int getButton_key() {
-        return button_key;
-    }
-
-    public void setButton_key(int key) {
-        this.button_key = key;
-    }
-
-    public float getPos_x() {
-        return pos_x;
-    }
-
-    public void setPos_x(float pos_x) {
         this.pos_x = pos_x;
-    }
-
-    public float getPos_y() {
-        return pos_y;
-    }
-
-    public void setPos_y(float pos_y) {
         this.pos_y = pos_y;
-    }
-
-    public int getCustom_id() {
-        return custom_id;
-    }
-
-    public void setCustom_id(int custom_id) {
         this.custom_id = custom_id;
     }
+
+    @Ignore
+    public static DiffUtil.ItemCallback<CustomButton> DIFF_CALLBACK = new DiffUtil.ItemCallback<CustomButton>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull CustomButton oldItem, @NonNull CustomButton newItem) {
+
+            return oldItem.button_id == newItem.button_id;
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull CustomButton oldItem, @NonNull CustomButton newItem) {
+            return oldItem.button_id == newItem.button_id && oldItem.button_key == newItem.button_key
+                    && oldItem.button_text.equals(newItem.button_text) && oldItem.pos_x == newItem.pos_x && oldItem.pos_y == newItem.pos_y;
+        }
+    };
 }
