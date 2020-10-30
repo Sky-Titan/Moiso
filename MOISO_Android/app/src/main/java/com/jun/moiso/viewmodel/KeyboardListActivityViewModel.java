@@ -1,44 +1,78 @@
 package com.jun.moiso.viewmodel;
 
-import android.app.Application;
-
-import androidx.annotation.NonNull;
 import androidx.databinding.ObservableArrayList;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.jun.moiso.database.MyDAO;
-import com.jun.moiso.database.MyDatabase;
 import com.jun.moiso.model.CustomKeyboard;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class KeyboardListActivityViewModel extends ViewModel {
+    private ObservableArrayList<CustomKeyboard> item_list = new ObservableArrayList<>();
+    private int remove_position = 0;//삭제된 아이템 위치
+    private int add_position = 0;//추가된 아이템 위치
+    private boolean isRemove = false;//아이템 삭제 여부
+    private boolean isAdd = false;//아이템 추가 여부
+    private boolean isUpdate = false;//아이템 업데이트 여부
 
-    private MyDAO dao;
 
-    private ExecutorService executorService;
-
-    public KeyboardListActivityViewModel(@NonNull Application application)
-    {
-        dao = MyDatabase.getInstance(application).dao();
-        executorService = Executors.newSingleThreadExecutor();
+    public int getRemove_position() {
+        return remove_position;
     }
 
-    public void deleteCustomKeyboard(int custom_id)
-    {
-        executorService.execute(() -> dao.deleteKeyboard(custom_id));
+    public void setRemove_position(int remove_position) {
+        this.remove_position = remove_position;
     }
 
-    public LiveData<List<CustomKeyboard>> getKeyboards()
-    {
-        return dao.selectAllKeyboards();
+    public int getAdd_position() {
+        return add_position;
     }
 
-    public void addKeyboard(String custom_name)
+    public void setAdd_position(int add_position) {
+        this.add_position = add_position;
+    }
+
+    public boolean isRemove() {
+        return isRemove;
+    }
+
+    public void setRemove(boolean remove) {
+        isRemove = remove;
+    }
+
+    public boolean isAdd() {
+        return isAdd;
+    }
+
+    public void setAdd(boolean add) {
+        isAdd = add;
+    }
+
+    public boolean isUpdate() {
+        return isUpdate;
+    }
+
+    public void setUpdate(boolean update) {
+        isUpdate = update;
+    }
+
+    public void addItem(CustomKeyboard customKeyboard)
     {
-        executorService.execute(() -> dao.insertCustomKeyboard(new CustomKeyboard(custom_name)));
+        item_list.add(customKeyboard);
+        add_position = item_list.size()-1;
+        isAdd = true;
+    }
+
+    public void removeItem(int position)
+    {
+        item_list.remove(position);
+        remove_position = position;
+        isRemove = true;
+    }
+    public ObservableArrayList<CustomKeyboard> getItem_list() {
+        return item_list;
+    }
+
+    public void setItem_list(ObservableArrayList<CustomKeyboard> item_list) {
+        this.item_list.clear();
+        this.item_list.addAll(item_list);
     }
 }

@@ -3,13 +3,10 @@ package com.jun.moiso.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +20,8 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jun.moiso.MyApplication;
 import com.jun.moiso.R;
-
+import com.jun.moiso.database.KeyboardDB;
+import com.jun.moiso.databinding.ActivityKeyboardCustomBinding;
 import com.jun.moiso.model.CustomButton;
 import com.jun.moiso.model.CustomKeyboard;
 import com.jun.moiso.model.KeyButton;
@@ -32,7 +30,6 @@ import com.jun.moiso.viewmodel.KeyboardCustomViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import io.reactivex.Observable;
@@ -44,12 +41,15 @@ public class KeyboardCustomActivity extends AppCompatActivity {
     private View dragView;//현재 드래그 된 view
     private float dx,dy;
 
+    private ActivityKeyboardCustomBinding binding;
+
+    private KeyboardDB keyboardDB;
 
     //버튼 검색창
     private AutoCompleteTextView autoCompleteTextView;
 
     private ArrayList<String> list = new ArrayList<>();
-    private HashMap<String, Integer> keyButtons = new HashMap<>();
+    private ArrayList<KeyButton> keyButtons = new ArrayList<>();
 
     private HashMap<Integer ,Button> buttons = new HashMap<>();
 
@@ -57,25 +57,25 @@ public class KeyboardCustomActivity extends AppCompatActivity {
     private Animation delete_animation;
     private View parent_view;
 
+    private CustomKeyboard customKeyboard;
     private KeyboardCustomViewModel viewModel;
 
-    private static final String TAG = "KeyboardCustomActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = getLayoutInflater().from(this).inflate(R.layout.activity_keyboard_custom,null);
 
-        setContentView(view);
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_keyboard_custom);
+        parent_view = binding.getRoot();
+
+        keyboardDB = KeyboardDB.getInstance(this);
 
         Intent intent = getIntent();
-
-        parent_view = view;
-
+        customKeyboard = new CustomKeyboard(intent.getIntExtra("custom_id",0), intent.getStringExtra("custom_name"));
         viewModel = new ViewModelProvider(this, new KeyboardCustomViewModelFactory(getApplication(), intent.getIntExtra("custom_id",0))).get(KeyboardCustomViewModel.class);
 
-        TextView custom_name_tv = findViewById(R.id.custom_name_text);
-        custom_name_tv.setText(intent.getStringExtra("custom_name"));
+
+        binding.setViewModel(viewModel);
 
         getAnimations();
 
@@ -89,8 +89,7 @@ public class KeyboardCustomActivity extends AppCompatActivity {
 
         MyApplication myApplication = (MyApplication) getApplication();
         list.addAll(myApplication.getList());
-
-        keyButtons = myApplication.getKeyButtons();
+        keyButtons.addAll(myApplication.getKeyButtons());
 
         //settingList();
 
@@ -103,46 +102,40 @@ public class KeyboardCustomActivity extends AppCompatActivity {
 
 
     //맨 처음 버튼들 불러오기
-    private void getButtons(ViewGroup parent_layout)
+    private void getButtons(final ViewGroup parent_layout)
     {
-        Observable.create(
-            e -> {
-                System.out.println(Thread.currentThread().getName());
-                e.onNext(viewModel.getCustomButtons());
-            }
-        ).subscribeOn(Schedulers.io())
+        Observable.just(viewModel.getCustomButtons()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
-                    LiveData<List<CustomButton>> custom_btn_live = (LiveData<List<CustomButton>>)o;
 
-                    if(!custom_btn_live.hasObservers()) {
-                        custom_btn_live.observe(this, customButtons -> {
-                            for (int i = 0; i < customButtons.size(); i++) {
-                                CustomButton customButton = customButtons.get(i);
+                    o.observe(this, customButtons -> {
+                        for(int i=0;i<customButtons.size();i++)
+                        {
+                            CustomButton customButton = customButtons.get(i);
 
-                                Button btn = new Button(getApplicationContext());
-                                btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                btn.setPadding(5, 5, 5, 5);
-                                btn.setBackground(getDrawable(R.drawable.mouse_center_btn_layout));
-                                btn.setTag(customButton.button_id);
-                                btn.setText(customButton.button_text);
-                                btn.setX(customButton.pos_x);
-                                btn.setY(customButton.pos_y);
+                            Button btn = new Button(getApplicationContext());
+                            btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                            btn.setPadding(5,5,5,5);
+                            btn.setBackground(getDrawable(R.drawable.mouse_center_btn_layout));
+                            btn.setTag(customButton.button_id);
+                            btn.setText(customButton.button_text);
+                            btn.setX(customButton.pos_x);
+                            btn.setY(customButton.pos_y);
 
+                            setChildViewDragListener(btn);
 
-                                Log.d(TAG, "옵저버 추가");
-                                setChildViewDragListener(btn);
-
-                                if (!buttons.containsKey(customButton.button_id)) {
-                                    buttons.putIfAbsent(customButton.button_id, btn);
-                                    //부모 레이아웃에 추가
-                                    parent_layout.addView(btn);
-                                }
-
+                            if(!buttons.containsKey(customButton.button_id))
+                            {
+                                buttons.putIfAbsent(customButton.button_id, btn);
+                                //부모 레이아웃에 추가
+                                parent_layout.addView(btn);
                             }
-                            ((LiveData<List<CustomButton>>) o).removeObservers(this);
-                        });
-                    }
+
+                        }
+                    });
+
+                    o.removeObservers(this);
+
                 });
 
     }
@@ -169,15 +162,19 @@ public class KeyboardCustomActivity extends AppCompatActivity {
         });
     }
 
-    private void addButton(ViewGroup parent_layout, int button_key, String button_text)
+    private void addButton(final ViewGroup parent_layout,final int button_key,final String button_text)
     {
         viewModel.insertButton(button_key, button_text, 0, autoCompleteTextView.getY() + autoCompleteTextView.getHeight() * 2);
-        Observable.create(
-            e -> e.onNext(viewModel.getRecentButton())
-        ).subscribeOn(Schedulers.newThread())
+        Observable.create(e -> {
+
+            e.onNext(viewModel.getRecentButton());
+
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
-                    CustomButton customButton = (CustomButton)o;
+
+                    CustomButton customButton = (CustomButton) o;
+
                     //화면에 버튼 추가
                     Button btn = new Button(getApplicationContext());
                     btn.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -188,24 +185,23 @@ public class KeyboardCustomActivity extends AppCompatActivity {
                     btn.setX(customButton.pos_x);
                     btn.setY(customButton.pos_y);
 
-                    Log.d(TAG, customButton.button_text);
-
                     setChildViewDragListener(btn);
+                    buttons.putIfAbsent(customButton.button_id, btn);
 
-                    if(!buttons.containsKey(customButton.button_id))
-                    {
-                        buttons.putIfAbsent(customButton.button_id, btn);
-
-                        //부모 레이아웃에 추가
-                        parent_layout.addView(btn);
-                    }
+                    //부모 레이아웃에 추가
+                    parent_layout.addView(btn);
                 });
     }
 
     //키코드 찾아오기
     private int findKeyCode(String button_text)
     {
-        return keyButtons.get(button_text);
+        for(int i=0;i<keyButtons.size();i++)
+        {
+            if(keyButtons.get(i).getKey_name().equals(button_text))
+                return keyButtons.get(i).getKey_code();
+        }
+        return -1;
     }
 
     //드래그할 자식뷰의 리스너 설정
